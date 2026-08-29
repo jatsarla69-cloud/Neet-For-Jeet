@@ -1,0 +1,1250 @@
+<!DOCTYPE html>
+<!-- NEET Notes + Quiz App - v2 -->
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NEET Notes + Quiz App</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0f1115">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="NEET App">
+<style>
+  :root{
+    --bg:#0f1115;
+    --card:#171a21;
+    --border:#2a2f3a;
+    --text:#eef1f6;
+    --muted:#9aa3b2;
+    --accent:#4f8cff;
+    --danger:#ef5350;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    padding-bottom:60px;
+  }
+  header{
+    padding:18px 16px 14px;
+    text-align:center;
+    border-bottom:1px solid var(--border);
+    position:sticky;
+    top:0;
+    background:var(--bg);
+    z-index:10;
+  }
+  header h1{
+    font-size:19px;
+    margin:0 0 3px;
+  }
+  header p{
+    margin:0;
+    color:var(--muted);
+    font-size:12.5px;
+  }
+  .tabs{
+    display:flex;
+    max-width:700px;
+    margin:14px auto 0;
+    padding:0 14px;
+    gap:8px;
+  }
+  .tab-btn{
+    flex:1;
+    padding:10px;
+    background:var(--card);
+    border:1px solid var(--border);
+    color:var(--muted);
+    border-radius:10px;
+    font-size:14px;
+    font-weight:600;
+    cursor:pointer;
+  }
+  .tab-btn.active{
+    color:var(--text);
+    border-color:var(--accent);
+    background:#1b2436;
+  }
+  .section{
+    max-width:700px;
+    margin:16px auto;
+    padding:0 14px;
+    display:none;
+  }
+  .section.active{
+    display:block;
+  }
+
+  /* ===== Notes / PDF section ===== */
+  .upload-box{
+    background:var(--card);
+    border:1.5px dashed var(--border);
+    border-radius:14px;
+    padding:22px 16px;
+    text-align:center;
+    margin-bottom:16px;
+  }
+  .upload-box p{
+    color:var(--muted);
+    font-size:13px;
+    margin:8px 0 14px;
+  }
+  .upload-btn{
+    display:inline-block;
+    background:var(--accent);
+    color:#fff;
+    padding:10px 22px;
+    border-radius:20px;
+    font-size:14px;
+    font-weight:600;
+    cursor:pointer;
+    border:none;
+  }
+  input[type="file"]{
+    display:none;
+  }
+  .file-list{
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+  }
+  .file-item{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:10px;
+    padding:12px 14px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    cursor:pointer;
+  }
+  .file-item:hover{
+    border-color:var(--accent);
+  }
+  .file-info{
+    display:flex;
+    flex-direction:column;
+    gap:2px;
+    overflow:hidden;
+  }
+  .file-name{
+    font-size:14px;
+    font-weight:600;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    max-width:420px;
+  }
+  .file-date{
+    font-size:11px;
+    color:var(--muted);
+  }
+  .file-actions{
+    display:flex;
+    gap:10px;
+    align-items:center;
+    flex-shrink:0;
+  }
+  .icon-btn{
+    background:none;
+    border:none;
+    color:var(--muted);
+    font-size:18px;
+    cursor:pointer;
+    padding:4px 6px;
+  }
+  .icon-btn.delete:hover{
+    color:var(--danger);
+  }
+  .icon-btn.view:hover{
+    color:var(--accent);
+  }
+  .empty-state{
+    text-align:center;
+    color:var(--muted);
+    font-size:13px;
+    padding:30px 10px;
+  }
+
+  /* Viewer modal */
+  .viewer-overlay{
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,0.85);
+    z-index:100;
+    flex-direction:column;
+  }
+  .viewer-overlay.show{
+    display:flex;
+  }
+  .viewer-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:12px 16px;
+    background:var(--card);
+    border-bottom:1px solid var(--border);
+  }
+  .viewer-header span{
+    font-size:14px;
+    font-weight:600;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    max-width:75%;
+  }
+  .close-btn{
+    background:none;
+    border:1px solid var(--border);
+    color:var(--text);
+    border-radius:50%;
+    width:32px;
+    height:32px;
+    font-size:16px;
+    cursor:pointer;
+  }
+  .viewer-frame{
+    flex:1;
+    border:none;
+    width:100%;
+    background:#fff;
+  }
+  .pdf-pages-container{
+    flex:1;
+    overflow-y:auto;
+    background:#525659;
+    padding:14px 0 40px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:14px;
+  }
+  .pdf-pages-container canvas{
+    max-width:100%;
+    box-shadow:0 2px 10px rgba(0,0,0,0.4);
+    background:#fff;
+  }
+  .pdf-loading{
+    color:#fff;
+    text-align:center;
+    padding:40px 20px;
+    font-size:14px;
+  }
+
+  /* Page (OneNote-style) images */
+  .page-images-container{
+    flex:1;
+    overflow-y:auto;
+    background:#525659;
+    padding:14px 0 90px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:14px;
+  }
+  .page-image-wrap{
+    position:relative;
+    max-width:100%;
+  }
+  .page-image-wrap img{
+    max-width:100%;
+    display:block;
+    box-shadow:0 2px 10px rgba(0,0,0,0.4);
+    background:#fff;
+  }
+  .page-image-del{
+    position:absolute;
+    top:8px;
+    right:8px;
+    background:rgba(0,0,0,0.6);
+    color:#fff;
+    border:none;
+    border-radius:50%;
+    width:28px;
+    height:28px;
+    font-size:14px;
+    cursor:pointer;
+  }
+  .page-empty{
+    color:#cfd3d8;
+    text-align:center;
+    padding:50px 20px;
+    font-size:14px;
+  }
+  .add-image-fab{
+    position:absolute;
+    bottom:20px;
+    left:50%;
+    transform:translateX(-50%);
+    background:var(--accent);
+    color:#fff;
+    border:none;
+    padding:12px 24px;
+    border-radius:24px;
+    font-size:14px;
+    font-weight:600;
+    cursor:pointer;
+    box-shadow:0 4px 14px rgba(0,0,0,0.4);
+    display:flex;
+    align-items:center;
+    gap:6px;
+    z-index:5;
+  }
+  .upload-btn-secondary{
+    display:inline-block;
+    background:transparent;
+    color:var(--accent);
+    padding:10px 22px;
+    border-radius:20px;
+    font-size:14px;
+    font-weight:600;
+    cursor:pointer;
+    border:1.5px solid var(--accent);
+    margin-left:8px;
+  }
+
+  /* ===== Biology Class 11 chapter list ===== */
+  .chapter-list{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+  }
+  .chapter-card{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:12px;
+    overflow:hidden;
+  }
+  .chapter-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:13px 14px;
+    cursor:pointer;
+  }
+  .chapter-title{
+    font-size:14px;
+    font-weight:600;
+  }
+  .chapter-counts{
+    font-size:11px;
+    color:var(--muted);
+    margin-top:3px;
+  }
+  .chapter-chevron{
+    color:var(--muted);
+    font-size:13px;
+    transition:transform .15s;
+  }
+  .chapter-card.expanded .chapter-chevron{
+    transform:rotate(90deg);
+  }
+  .chapter-body{
+    display:none;
+    padding:0 14px 14px;
+    border-top:1px solid var(--border);
+  }
+  .chapter-card.expanded .chapter-body{
+    display:block;
+  }
+  .chapter-actions{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+    margin:12px 0;
+  }
+  .chapter-action-btn{
+    background:#1e222c;
+    border:1px solid var(--border);
+    color:var(--text);
+    font-size:12.5px;
+    padding:8px 13px;
+    border-radius:16px;
+    cursor:pointer;
+    font-weight:600;
+  }
+  .chapter-action-btn.quiz-btn{
+    border-color:var(--accent);
+    color:var(--accent);
+  }
+  .chapter-mini-list{
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+    margin-bottom:8px;
+  }
+  .chapter-mini-item{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    background:#1e222c;
+    border:1px solid var(--border);
+    border-radius:8px;
+    padding:8px 10px;
+    font-size:12.5px;
+  }
+  .chapter-mini-item span{
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+  }
+  .chapter-mini-actions{
+    display:flex;
+    gap:8px;
+    flex-shrink:0;
+  }
+  .chapter-mini-actions button{
+    background:none;
+    border:none;
+    color:var(--muted);
+    font-size:15px;
+    cursor:pointer;
+  }
+  .chapter-empty-note{
+    font-size:12px;
+    color:var(--muted);
+    padding:4px 0 8px;
+  }
+
+  /* Chapter quiz (question cards, reused from quiz style) */
+  .chapter-quiz-container{
+    flex:1;
+    overflow-y:auto;
+    background:var(--bg);
+    padding:14px;
+  }
+  .cq-card{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:14px;
+    padding:16px 14px;
+    margin-bottom:16px;
+  }
+  .cq-meta{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:10px;
+  }
+  .cq-num{
+    font-size:12px;
+    font-weight:700;
+    color:var(--accent);
+  }
+  .cq-tag{
+    font-size:11px;
+    background:#3a2f6b;
+    color:#c9c3ff;
+    padding:3px 9px;
+    border-radius:20px;
+  }
+  .cq-text{
+    font-size:15px;
+    line-height:1.6;
+    margin-bottom:12px;
+    white-space:pre-line;
+  }
+  .cq-options{
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+  }
+  .cq-option{
+    text-align:left;
+    background:#1e222c;
+    border:1px solid var(--border);
+    color:var(--text);
+    padding:10px 12px;
+    border-radius:10px;
+    font-size:14px;
+    cursor:pointer;
+    line-height:1.5;
+  }
+  .cq-option.correct-pick{
+    background:var(--correct-bg, #123524);
+    border-color:#2fbf71;
+    color:#c9f5da;
+  }
+  .cq-option.wrong-pick{
+    background:#3a1a1a;
+    border-color:var(--danger);
+    color:#ffd6d4;
+  }
+  .cq-option.reveal-correct{
+    border-color:#2fbf71;
+    box-shadow:inset 0 0 0 1px #2fbf71;
+  }
+  .cq-option.dim{
+    opacity:0.55;
+  }
+  .cq-feedback{
+    margin-top:12px;
+    padding:11px 12px;
+    border-radius:10px;
+    font-size:13.5px;
+    line-height:1.6;
+    display:none;
+  }
+  .cq-feedback.show{
+    display:block;
+  }
+  .cq-feedback.right{
+    background:#123524;
+    border:1px solid #2fbf71;
+    color:#d7f7e3;
+  }
+  .cq-feedback.wrong{
+    background:#3a1a1a;
+    border:1px solid var(--danger);
+    color:#ffe1df;
+  }
+  .cq-score-bar{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:12px;
+    padding:10px 14px;
+    margin-bottom:14px;
+    font-size:13px;
+    position:sticky;
+    top:0;
+    z-index:5;
+  }
+
+  /* ===== Quiz section ===== */
+  .quiz-frame-wrap{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:14px;
+    overflow:hidden;
+  }
+  .quiz-frame{
+    width:100%;
+    height:78vh;
+    border:none;
+    display:block;
+  }
+  .quiz-note{
+    text-align:center;
+    color:var(--muted);
+    font-size:12px;
+    margin-top:10px;
+  }
+
+  .storage-note{
+    background:#1b2436;
+    border:1px solid var(--border);
+    border-radius:10px;
+    padding:10px 12px;
+    font-size:12px;
+    color:var(--muted);
+    margin-bottom:14px;
+    line-height:1.5;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>📚 NEET Notes + Quiz</h1>
+  <p>अपने notes yahan rakho, quiz niche practice karo</p>
+  <button id="installBtn" onclick="installApp()" style="display:none; margin-top:10px; background:#4f8cff; color:#fff; border:none; padding:8px 18px; border-radius:20px; font-size:13px; font-weight:600; cursor:pointer;">⬇️ Install App</button>
+</header>
+
+<div class="tabs">
+  <button class="tab-btn active" id="tabNotesBtn" onclick="switchTab('notes')">📄 Notes (PDF)</button>
+  <button class="tab-btn" id="tabQuizBtn" onclick="switchTab('quiz')">🧠 Quiz</button>
+  <button class="tab-btn" id="tabBioBtn" onclick="switchTab('bio')">🧬 Bio 11th</button>
+</div>
+
+<!-- NOTES SECTION -->
+<div class="section active" id="notesSection">
+  <div class="storage-note">
+    ℹ️ Ye PDFs is device/browser me hi save rahenge (local storage). Agar naya phone/browser use karoge to dobara upload karna padega.
+  </div>
+
+  <div class="upload-box">
+    <div style="font-size:32px;">📤</div>
+    <p>Apni PDF notes upload karo, ya naya page banakar images add karo</p>
+    <label class="upload-btn" for="pdfInput">+ PDF Add Karo</label>
+    <input type="file" id="pdfInput" accept="application/pdf" onchange="handleFileUpload(event)">
+    <button class="upload-btn-secondary" onclick="createNewPage()">+ Naya Page</button>
+  </div>
+
+  <div class="file-list" id="fileList"></div>
+</div>
+
+<!-- BIOLOGY CLASS 11 SECTION -->
+<div class="section" id="bioSection">
+  <div class="storage-note">
+    🧬 Biology Class 11 — 19 NCERT chapters. Har chapter mein apni PDF notes aur questions (JSON) alag se add kar sakte ho.
+  </div>
+  <div class="chapter-list" id="chapterList"></div>
+</div>
+
+<!-- QUIZ SECTION -->
+<div class="section" id="quizSection">
+  <div class="quiz-frame-wrap">
+    <iframe class="quiz-frame" src="pgd_dpp_quiz.html" id="quizFrame" onerror="quizLoadFailed()"></iframe>
+  </div>
+  <div class="quiz-note">Quiz live hai — click karke practice karo, right/wrong turant dikhega</div>
+  <div class="quiz-note" style="color:#ef5350; margin-top:6px;" id="quizErrorNote"></div>
+</div>
+
+<!-- PDF Viewer Modal -->
+<div class="viewer-overlay" id="viewerOverlay">
+  <div class="viewer-header">
+    <span id="viewerFileName">File</span>
+    <button class="close-btn" onclick="closeViewer()">✕</button>
+  </div>
+  <div class="pdf-pages-container" id="pdfPagesContainer">
+    <div class="pdf-loading" id="pdfLoading">PDF load ho raha hai...</div>
+  </div>
+
+  <div class="page-images-container" id="pageImagesContainer" style="display:none;">
+    <div class="page-empty" id="pageEmptyState">Abhi is page mein koi image nahi hai — niche se add karo</div>
+  </div>
+  <button class="add-image-fab" id="addImageFab" style="display:none;" onclick="document.getElementById('pageImageInput').click()">🖼️ Add Image</button>
+  <input type="file" id="pageImageInput" accept="image/*" multiple onchange="handlePageImageUpload(event)">
+
+  <div class="chapter-quiz-container" id="chapterQuizContainer" style="display:none;"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+
+<script>
+const DB_NAME = 'neetNotesDB';
+const STORE_NAME = 'pdfs';
+let db;
+let currentPageId = null;
+
+const BIO_CHAPTERS = [
+  "1. The Living World",
+  "2. Biological Classification",
+  "3. Plant Kingdom",
+  "4. Animal Kingdom",
+  "5. Morphology of Flowering Plants",
+  "6. Anatomy of Flowering Plants",
+  "7. Structural Organisation in Animals",
+  "8. Cell: The Unit of Life",
+  "9. Biomolecules",
+  "10. Cell Cycle and Cell Division",
+  "11. Photosynthesis in Higher Plants",
+  "12. Respiration in Plants",
+  "13. Plant Growth and Development",
+  "14. Breathing and Exchange of Gases",
+  "15. Body Fluids and Circulation",
+  "16. Excretory Products and their Elimination",
+  "17. Locomotion and Movement",
+  "18. Neural Control and Coordination",
+  "19. Chemical Coordination and Integration"
+];
+
+const expandedChapters = new Set();
+let chapterQuizScore = 0;
+let chapterQuizAnswered = [];
+let chapterQuizQuestions = [];
+
+// Open/create IndexedDB
+function openDB(){
+  return new Promise((resolve, reject) => {
+    const request = indexedDB.open(DB_NAME, 1);
+    request.onupgradeneeded = (e) => {
+      const database = e.target.result;
+      if(!database.objectStoreNames.contains(STORE_NAME)){
+        database.createObjectStore(STORE_NAME, { keyPath: 'id', autoIncrement: true });
+      }
+    };
+    request.onsuccess = (e) => resolve(e.target.result);
+    request.onerror = (e) => reject(e);
+  });
+}
+
+async function init(){
+  try{
+    db = await openDB();
+    loadFileList();
+    renderChapterList();
+  }catch(err){
+    console.error('DB init failed', err);
+  }
+}
+
+function switchTab(tab){
+  document.getElementById('notesSection').classList.toggle('active', tab === 'notes');
+  document.getElementById('quizSection').classList.toggle('active', tab === 'quiz');
+  document.getElementById('bioSection').classList.toggle('active', tab === 'bio');
+  document.getElementById('tabNotesBtn').classList.toggle('active', tab === 'notes');
+  document.getElementById('tabQuizBtn').classList.toggle('active', tab === 'quiz');
+  document.getElementById('tabBioBtn').classList.toggle('active', tab === 'bio');
+}
+
+function handleFileUpload(event){
+  const file = event.target.files[0];
+  if(!file) return;
+  if(file.type !== 'application/pdf'){
+    alert('Sirf PDF files hi upload kar sakte ho');
+    return;
+  }
+
+  const reader = new FileReader();
+  reader.onload = async function(e){
+    const arrayBuffer = e.target.result;
+    const record = {
+      type: 'pdf',
+      name: file.name,
+      date: new Date().toLocaleDateString('en-IN', { day:'numeric', month:'short', year:'numeric' }),
+      data: arrayBuffer
+    };
+    try{
+      const tx = db.transaction(STORE_NAME, 'readwrite');
+      tx.objectStore(STORE_NAME).add(record);
+      tx.oncomplete = () => {
+        loadFileList();
+        event.target.value = '';
+      };
+    }catch(err){
+      console.error('Save failed', err);
+      alert('File save nahi ho payi, दोबारा try करो');
+    }
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+function createNewPage(){
+  const name = prompt('Page ka naam likho:', 'Naya Page');
+  if(name === null) return; // cancelled
+  const record = {
+    type: 'page',
+    name: name.trim() || 'Naya Page',
+    date: new Date().toLocaleDateString('en-IN', { day:'numeric', month:'short', year:'numeric' }),
+    images: []
+  };
+  const tx = db.transaction(STORE_NAME, 'readwrite');
+  const req = tx.objectStore(STORE_NAME).add(record);
+  tx.oncomplete = () => {
+    loadFileList();
+    viewFile(req.result); // open the new page right away
+  };
+}
+
+// Resize + compress an image file before storing, to keep IndexedDB size sane
+function resizeImageFile(file, maxWidth){
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    const url = URL.createObjectURL(file);
+    img.onload = () => {
+      let { width, height } = img;
+      if(width > maxWidth){
+        height = Math.round(height * (maxWidth / width));
+        width = maxWidth;
+      }
+      const canvas = document.createElement('canvas');
+      canvas.width = width;
+      canvas.height = height;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, width, height);
+      URL.revokeObjectURL(url);
+      resolve(canvas.toDataURL('image/jpeg', 0.88));
+    };
+    img.onerror = (err) => {
+      URL.revokeObjectURL(url);
+      reject(err);
+    };
+    img.src = url;
+  });
+}
+
+async function handlePageImageUpload(event){
+  const files = Array.from(event.target.files || []);
+  if(files.length === 0) return;
+  const id = currentPageId;
+  if(!id) return;
+
+  try{
+    const dataUrls = await Promise.all(files.map(f => resizeImageFile(f, 1600)));
+
+    const tx = db.transaction(STORE_NAME, 'readwrite');
+    const store = tx.objectStore(STORE_NAME);
+    const getReq = store.get(id);
+    getReq.onsuccess = () => {
+      const record = getReq.result;
+      if(!record) return;
+      if(!record.images) record.images = [];
+      record.images.push(...dataUrls);
+      store.put(record);
+      tx.oncomplete = () => {
+        renderPageImages(record.images, id);
+        event.target.value = '';
+      };
+    };
+  }catch(err){
+    console.error('Image add failed', err);
+    alert('Image add nahi ho payi, दोबारा try करो');
+  }
+}
+
+function deletePageImage(id, imgIndex){
+  if(!confirm('Ye image page se hatani hai?')) return;
+  const tx = db.transaction(STORE_NAME, 'readwrite');
+  const store = tx.objectStore(STORE_NAME);
+  const getReq = store.get(id);
+  getReq.onsuccess = () => {
+    const record = getReq.result;
+    if(!record || !record.images) return;
+    record.images.splice(imgIndex, 1);
+    store.put(record);
+    tx.oncomplete = () => renderPageImages(record.images, id);
+  };
+}
+
+function loadFileList(){
+  const listDiv = document.getElementById('fileList');
+  const tx = db.transaction(STORE_NAME, 'readonly');
+  const store = tx.objectStore(STORE_NAME);
+  const request = store.getAll();
+
+  request.onsuccess = () => {
+    const files = request.result.filter(f => f.chapterIdx === undefined);
+    if(files.length === 0){
+      listDiv.innerHTML = '<div class="empty-state">Abhi koi PDF upload nahi hui — upar se add karo</div>';
+      return;
+    }
+    listDiv.innerHTML = '';
+    files.slice().reverse().forEach(file => {
+      const item = document.createElement('div');
+      item.className = 'file-item';
+      const icon = file.type === 'page' ? '🖼️' : '📄';
+      item.innerHTML = `
+        <div class="file-info" onclick="viewFile(${file.id})">
+          <div class="file-name">${icon} ${file.name}</div>
+          <div class="file-date">${file.date}</div>
+        </div>
+        <div class="file-actions">
+          <button class="icon-btn view" onclick="viewFile(${file.id})" title="View">👁️</button>
+          <button class="icon-btn delete" onclick="deleteFile(${file.id})" title="Delete">🗑️</button>
+        </div>
+      `;
+      listDiv.appendChild(item);
+    });
+  };
+}
+
+function viewFile(id){
+  const tx = db.transaction(STORE_NAME, 'readonly');
+  const store = tx.objectStore(STORE_NAME);
+  const request = store.get(id);
+
+  request.onsuccess = () => {
+    const file = request.result;
+    if(!file) return;
+    document.getElementById('viewerFileName').textContent = file.name;
+    document.getElementById('viewerOverlay').classList.add('show');
+
+    const pdfContainer = document.getElementById('pdfPagesContainer');
+    const pageContainer = document.getElementById('pageImagesContainer');
+    const fab = document.getElementById('addImageFab');
+    const quizContainer = document.getElementById('chapterQuizContainer');
+    quizContainer.style.display = 'none';
+    quizContainer.innerHTML = '';
+
+    if(file.type === 'page'){
+      currentPageId = file.id;
+      pdfContainer.style.display = 'none';
+      pageContainer.style.display = 'flex';
+      fab.style.display = 'flex';
+      renderPageImages(file.images || [], file.id);
+    }else{
+      currentPageId = null;
+      pageContainer.style.display = 'none';
+      fab.style.display = 'none';
+      pdfContainer.style.display = 'flex';
+      renderPDF(file.data);
+    }
+  };
+}
+
+function renderPageImages(images, id){
+  const container = document.getElementById('pageImagesContainer');
+  if(!images || images.length === 0){
+    container.innerHTML = '<div class="page-empty" id="pageEmptyState">Abhi is page mein koi image nahi hai — niche se add karo</div>';
+    return;
+  }
+  container.innerHTML = '';
+  images.forEach((src, idx) => {
+    const wrap = document.createElement('div');
+    wrap.className = 'page-image-wrap';
+    wrap.innerHTML = `
+      <img src="${src}" alt="page image ${idx+1}">
+      <button class="page-image-del" onclick="deletePageImage(${id}, ${idx})" title="Delete">✕</button>
+    `;
+    container.appendChild(wrap);
+  });
+}
+
+// ============ BIOLOGY CLASS 11 — Chapter list, PDFs, Questions, Quiz ============
+
+function bioQuestionsKey(idx){
+  return 'bioQuestions_' + idx;
+}
+
+function loadChapterQuestions(idx){
+  try{
+    const raw = localStorage.getItem(bioQuestionsKey(idx));
+    return raw ? JSON.parse(raw) : [];
+  }catch(err){
+    console.error('Chapter questions load failed', err);
+    return [];
+  }
+}
+
+function saveChapterQuestions(idx, arr){
+  localStorage.setItem(bioQuestionsKey(idx), JSON.stringify(arr));
+}
+
+async function getChapterPdfs(idx){
+  return new Promise((resolve) => {
+    const tx = db.transaction(STORE_NAME, 'readonly');
+    const store = tx.objectStore(STORE_NAME);
+    const req = store.getAll();
+    req.onsuccess = () => {
+      resolve(req.result.filter(f => f.chapterIdx === idx));
+    };
+    req.onerror = () => resolve([]);
+  });
+}
+
+async function renderChapterList(){
+  if(!db) return;
+  const container = document.getElementById('chapterList');
+  const tx = db.transaction(STORE_NAME, 'readonly');
+  const allFiles = await new Promise((resolve) => {
+    const req = tx.objectStore(STORE_NAME).getAll();
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = () => resolve([]);
+  });
+
+  container.innerHTML = '';
+  BIO_CHAPTERS.forEach((chapterName, idx) => {
+    const pdfs = allFiles.filter(f => f.chapterIdx === idx);
+    const questions = loadChapterQuestions(idx);
+    const isExpanded = expandedChapters.has(idx);
+
+    const card = document.createElement('div');
+    card.className = 'chapter-card' + (isExpanded ? ' expanded' : '');
+
+    const pdfListHtml = pdfs.length
+      ? pdfs.map(f => `
+          <div class="chapter-mini-item">
+            <span onclick="viewFile(${f.id})">📄 ${f.name}</span>
+            <div class="chapter-mini-actions">
+              <button onclick="viewFile(${f.id})" title="View">👁️</button>
+              <button onclick="deleteFile(${f.id})" title="Delete">🗑️</button>
+            </div>
+          </div>
+        `).join('')
+      : '<div class="chapter-empty-note">Abhi is chapter mein koi PDF nahi hai</div>';
+
+    card.innerHTML = `
+      <div class="chapter-head" onclick="toggleChapter(${idx})">
+        <div>
+          <div class="chapter-title">${chapterName}</div>
+          <div class="chapter-counts">📄 ${pdfs.length} PDF · 📝 ${questions.length} Questions</div>
+        </div>
+        <div class="chapter-chevron">▶</div>
+      </div>
+      <div class="chapter-body">
+        <div class="chapter-actions">
+          <label class="chapter-action-btn" for="chPdfInput${idx}">+ Add PDF</label>
+          <input type="file" id="chPdfInput${idx}" accept="application/pdf" onchange="handleChapterPdfUpload(event, ${idx})">
+          <label class="chapter-action-btn" for="chQInput${idx}">+ Add Questions (JSON)</label>
+          <input type="file" id="chQInput${idx}" accept="application/json,.json" onchange="handleChapterQuestionsUpload(event, ${idx})">
+          ${questions.length ? `<button class="chapter-action-btn quiz-btn" onclick="openChapterQuiz(${idx})">▶️ Start Quiz (${questions.length})</button>` : ''}
+          ${questions.length ? `<button class="chapter-action-btn" onclick="clearChapterQuestions(${idx})">🗑️ Questions Hatao</button>` : ''}
+        </div>
+        <div class="chapter-mini-list">${pdfListHtml}</div>
+      </div>
+    `;
+    container.appendChild(card);
+  });
+}
+
+function toggleChapter(idx){
+  if(expandedChapters.has(idx)) expandedChapters.delete(idx);
+  else expandedChapters.add(idx);
+  renderChapterList();
+}
+
+function handleChapterPdfUpload(event, idx){
+  const file = event.target.files[0];
+  if(!file) return;
+  if(file.type !== 'application/pdf'){
+    alert('Sirf PDF files hi upload kar sakte ho');
+    return;
+  }
+
+  const reader = new FileReader();
+  reader.onload = async function(e){
+    const record = {
+      type: 'pdf',
+      chapterIdx: idx,
+      name: file.name,
+      date: new Date().toLocaleDateString('en-IN', { day:'numeric', month:'short', year:'numeric' }),
+      data: e.target.result
+    };
+    const tx = db.transaction(STORE_NAME, 'readwrite');
+    tx.objectStore(STORE_NAME).add(record);
+    tx.oncomplete = () => {
+      expandedChapters.add(idx);
+      renderChapterList();
+      event.target.value = '';
+    };
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+function validateChapterQuestion(q, i){
+  if(typeof q.text !== 'string' || !q.text.trim()) return `Question ${i+1}: 'text' missing hai`;
+  if(!Array.isArray(q.options) || q.options.length < 2) return `Question ${i+1}: 'options' kam se kam 2 honi chahiye`;
+  if(typeof q.correct !== 'number' || q.correct < 0 || q.correct >= q.options.length) return `Question ${i+1}: 'correct' ek valid option index honi chahiye`;
+  return null;
+}
+
+function handleChapterQuestionsUpload(event, idx){
+  const file = event.target.files[0];
+  if(!file) return;
+
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    let parsed;
+    try{
+      parsed = JSON.parse(e.target.result);
+    }catch(err){
+      alert('❌ File valid JSON nahi hai. Format check karo.');
+      event.target.value = '';
+      return;
+    }
+    if(!Array.isArray(parsed)){
+      alert('❌ JSON ke top level par ek array hona chahiye (questions ki list).');
+      event.target.value = '';
+      return;
+    }
+    for(let i = 0; i < parsed.length; i++){
+      const err = validateChapterQuestion(parsed[i], i);
+      if(err){
+        alert('❌ ' + err);
+        event.target.value = '';
+        return;
+      }
+    }
+    const normalized = parsed.map(q => ({
+      tag: q.tag || 'General',
+      text: q.text,
+      options: q.options,
+      correct: q.correct,
+      explain: q.explain || ''
+    }));
+    const existing = loadChapterQuestions(idx);
+    saveChapterQuestions(idx, existing.concat(normalized));
+    expandedChapters.add(idx);
+    renderChapterList();
+    event.target.value = '';
+  };
+  reader.readAsText(file);
+}
+
+function clearChapterQuestions(idx){
+  const existing = loadChapterQuestions(idx);
+  if(existing.length === 0) return;
+  if(!confirm(`${existing.length} questions is chapter se hatane hain? Ye permanent hai.`)) return;
+  localStorage.removeItem(bioQuestionsKey(idx));
+  renderChapterList();
+}
+
+function openChapterQuiz(idx){
+  const questions = loadChapterQuestions(idx);
+  if(questions.length === 0) return;
+
+  chapterQuizQuestions = questions;
+  chapterQuizScore = 0;
+  chapterQuizAnswered = new Array(questions.length).fill(false);
+
+  document.getElementById('viewerFileName').textContent = BIO_CHAPTERS[idx] + ' — Quiz';
+  document.getElementById('viewerOverlay').classList.add('show');
+
+  document.getElementById('pdfPagesContainer').style.display = 'none';
+  document.getElementById('pageImagesContainer').style.display = 'none';
+  document.getElementById('addImageFab').style.display = 'none';
+  const quizContainer = document.getElementById('chapterQuizContainer');
+  quizContainer.style.display = 'block';
+
+  renderChapterQuizQuestions();
+}
+
+function renderChapterQuizQuestions(){
+  const container = document.getElementById('chapterQuizContainer');
+  container.innerHTML = `
+    <div class="cq-score-bar">
+      <span>Score: <b id="cqScoreDisplay" style="color:var(--accent); font-size:15px;">0</b> / ${chapterQuizQuestions.length}</span>
+    </div>
+    <div id="cqList"></div>
+  `;
+  const list = document.getElementById('cqList');
+
+  chapterQuizQuestions.forEach((q, qIndex) => {
+    const card = document.createElement('div');
+    card.className = 'cq-card';
+    card.innerHTML = `
+      <div class="cq-meta">
+        <span class="cq-num">Q${qIndex + 1}</span>
+        <span class="cq-tag">${q.tag}</span>
+      </div>
+      <div class="cq-text">${q.text}</div>
+      <div class="cq-options" id="cq-options-${qIndex}"></div>
+      <div class="cq-feedback" id="cq-feedback-${qIndex}"></div>
+    `;
+    list.appendChild(card);
+
+    const optionsDiv = card.querySelector(`#cq-options-${qIndex}`);
+    q.options.forEach((optText, optIndex) => {
+      const btn = document.createElement('button');
+      btn.className = 'cq-option';
+      btn.textContent = optText;
+      btn.onclick = () => selectChapterQuizAnswer(qIndex, optIndex);
+      optionsDiv.appendChild(btn);
+    });
+  });
+}
+
+function selectChapterQuizAnswer(qIndex, optIndex){
+  if(chapterQuizAnswered[qIndex]) return;
+  chapterQuizAnswered[qIndex] = true;
+
+  const q = chapterQuizQuestions[qIndex];
+  const optionsDiv = document.getElementById(`cq-options-${qIndex}`);
+  const buttons = optionsDiv.querySelectorAll('.cq-option');
+  const feedback = document.getElementById(`cq-feedback-${qIndex}`);
+
+  buttons.forEach((btn, i) => {
+    btn.onclick = null;
+    if(i === optIndex && i === q.correct) btn.classList.add('correct-pick');
+    else if(i === optIndex && i !== q.correct) btn.classList.add('wrong-pick');
+    else if(i === q.correct) btn.classList.add('reveal-correct');
+    else btn.classList.add('dim');
+  });
+
+  const isCorrect = optIndex === q.correct;
+  if(isCorrect) chapterQuizScore++;
+
+  feedback.className = 'cq-feedback show ' + (isCorrect ? 'right' : 'wrong');
+  feedback.innerHTML = `<b>${isCorrect ? '✅ सही जवाब!' : '❌ गलत जवाब'}</b>${q.explain ? '<div style="margin-top:6px; color:var(--muted);">'+q.explain+'</div>' : ''}`;
+
+  document.getElementById('cqScoreDisplay').textContent = chapterQuizScore;
+}
+
+async function renderPDF(arrayBuffer){
+  const container = document.getElementById('pdfPagesContainer');
+  container.innerHTML = '<div class="pdf-loading" id="pdfLoading">PDF load ho raha hai...</div>';
+
+  try{
+    // Clone buffer since pdf.js may detach it
+    const bufferCopy = arrayBuffer.slice(0);
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+    const loadingTask = pdfjsLib.getDocument({ data: bufferCopy });
+    const pdf = await loadingTask.promise;
+
+    container.innerHTML = '';
+
+    const containerWidth = window.innerWidth - 20;
+    const DPR = window.devicePixelRatio || 1;
+    const ZOOM_HEADROOM = 2; // extra resolution so pinch-zoom stays sharp
+
+    for(let pageNum = 1; pageNum <= pdf.numPages; pageNum++){
+      const page = await pdf.getPage(pageNum);
+      const unscaledViewport = page.getViewport({ scale: 1 });
+      const displayScale = containerWidth / unscaledViewport.width;
+      const displayViewport = page.getViewport({ scale: displayScale });
+
+      // Render at higher pixel density than CSS size for crisp output
+      const renderScale = displayScale * DPR * ZOOM_HEADROOM;
+      const renderViewport = page.getViewport({ scale: renderScale });
+
+      const canvas = document.createElement('canvas');
+      canvas.width = Math.floor(renderViewport.width);
+      canvas.height = Math.floor(renderViewport.height);
+      canvas.style.width = Math.floor(displayViewport.width) + 'px';
+      canvas.style.height = Math.floor(displayViewport.height) + 'px';
+      const ctx = canvas.getContext('2d');
+
+      container.appendChild(canvas);
+
+      await page.render({ canvasContext: ctx, viewport: renderViewport }).promise;
+    }
+  }catch(err){
+    console.error('PDF render failed', err);
+    container.innerHTML = '<div class="pdf-loading">PDF load nahi ho payi. File corrupt ho sakti hai ya bahut badi hai.</div>';
+  }
+}
+
+function closeViewer(){
+  document.getElementById('viewerOverlay').classList.remove('show');
+  document.getElementById('pdfPagesContainer').innerHTML = '';
+  document.getElementById('pageImagesContainer').innerHTML = '';
+  document.getElementById('addImageFab').style.display = 'none';
+  document.getElementById('chapterQuizContainer').style.display = 'none';
+  document.getElementById('chapterQuizContainer').innerHTML = '';
+  currentPageId = null;
+}
+
+function deleteFile(id){
+  if(!confirm('Ye PDF delete karni hai?')) return;
+  const tx = db.transaction(STORE_NAME, 'readwrite');
+  tx.objectStore(STORE_NAME).delete(id);
+  tx.oncomplete = () => {
+    loadFileList();
+    renderChapterList();
+  };
+}
+
+init();
+
+// Register service worker for PWA installability
+if('serviceWorker' in navigator){
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').catch(err => {
+      console.log('Service worker registration failed:', err);
+    });
+  });
+}
+
+// Show custom install prompt when browser fires it
+let deferredPrompt;
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  const installBtn = document.getElementById('installBtn');
+  if(installBtn) installBtn.style.display = 'inline-block';
+});
+
+function installApp(){
+  if(!deferredPrompt) return;
+  deferredPrompt.prompt();
+  deferredPrompt.userChoice.then(() => {
+    deferredPrompt = null;
+    const installBtn = document.getElementById('installBtn');
+    if(installBtn) installBtn.style.display = 'none';
+  });
+}
+</script>
+
+</body>
+</html>
