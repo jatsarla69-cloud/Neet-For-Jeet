@@ -565,6 +565,189 @@
     margin-top:10px;
   }
 
+  /* ===== AI Tutor tab ===== */
+  #aiSection{ --accent:#00d4aa; }
+  .ai-key-box{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:14px;
+    padding:14px;
+    margin-bottom:14px;
+  }
+  .ai-key-box p{
+    font-size:12px;
+    color:var(--muted);
+    margin:0 0 10px;
+    line-height:1.5;
+  }
+  .ai-key-row{ display:flex; gap:8px; }
+  .ai-key-row input{
+    flex:1;
+    background:#1e222c;
+    border:1px solid var(--border);
+    color:var(--text);
+    border-radius:10px;
+    padding:10px 12px;
+    font-size:13px;
+  }
+  .ai-key-row button{
+    background:linear-gradient(135deg,#00d4aa,#00a884);
+    border:none;
+    color:#00251c;
+    font-weight:700;
+    padding:0 16px;
+    border-radius:10px;
+    font-size:13px;
+    cursor:pointer;
+    white-space:nowrap;
+  }
+  .ai-key-saved{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    font-size:12.5px;
+    color:var(--success);
+    gap:8px;
+  }
+  .ai-key-saved button{
+    background:none;
+    border:1px solid var(--border);
+    color:var(--muted);
+    padding:5px 10px;
+    border-radius:8px;
+    font-size:11.5px;
+    cursor:pointer;
+    flex-shrink:0;
+  }
+  .ai-subtabs{
+    display:flex;
+    gap:8px;
+    margin-bottom:14px;
+    overflow-x:auto;
+  }
+  .ai-subtab-btn{
+    flex:0 0 auto;
+    padding:8px 14px;
+    background:var(--card);
+    border:1px solid var(--border);
+    color:var(--muted);
+    border-radius:16px;
+    font-size:12.5px;
+    font-weight:600;
+    cursor:pointer;
+    white-space:nowrap;
+  }
+  .ai-subtab-btn.active{
+    color:#00251c;
+    border-color:transparent;
+    background:linear-gradient(135deg,#00d4aa,#00a884);
+  }
+  .ai-panel{ display:none; }
+  .ai-panel.active{ display:block; }
+  .ai-chat-messages{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    min-height:200px;
+    max-height:52vh;
+    overflow-y:auto;
+    padding:4px 2px 10px;
+  }
+  .ai-msg{
+    max-width:85%;
+    padding:10px 13px;
+    border-radius:14px;
+    font-size:13.5px;
+    line-height:1.5;
+    white-space:pre-wrap;
+  }
+  .ai-msg.user{
+    align-self:flex-end;
+    background:linear-gradient(135deg,#4f8cff,#8a5cff);
+    color:#fff;
+    border-bottom-right-radius:4px;
+  }
+  .ai-msg.bot{
+    align-self:flex-start;
+    background:var(--card2);
+    border:1px solid var(--border);
+    color:var(--text);
+    border-bottom-left-radius:4px;
+  }
+  .ai-msg.loading{ color:var(--muted); font-style:italic; }
+  .ai-chat-input-row{ display:flex; gap:8px; margin-top:8px; }
+  .ai-chat-input-row textarea{
+    flex:1;
+    background:#1e222c;
+    border:1px solid var(--border);
+    color:var(--text);
+    border-radius:14px;
+    padding:11px 14px;
+    font-size:13.5px;
+    resize:none;
+    font-family:inherit;
+    max-height:100px;
+  }
+  .ai-send-btn{
+    background:linear-gradient(135deg,#00d4aa,#00a884);
+    border:none;
+    color:#00251c;
+    width:44px;
+    border-radius:14px;
+    font-size:17px;
+    cursor:pointer;
+    flex-shrink:0;
+  }
+  .ai-field-label{ font-size:12px; color:var(--muted); margin:12px 0 6px; font-weight:600; }
+  .ai-select{
+    width:100%;
+    background:#1e222c;
+    border:1px solid var(--border);
+    color:var(--text);
+    border-radius:10px;
+    padding:11px 12px;
+    font-size:13.5px;
+  }
+  .ai-generate-btn{
+    width:100%;
+    margin-top:14px;
+    background:linear-gradient(135deg,#00d4aa,#00a884);
+    border:none;
+    color:#00251c;
+    font-weight:700;
+    padding:12px;
+    border-radius:12px;
+    font-size:14px;
+    cursor:pointer;
+  }
+  .ai-result-box{
+    margin-top:14px;
+    background:var(--card2);
+    border:1px solid var(--border);
+    border-radius:12px;
+    padding:14px;
+    font-size:13.5px;
+    line-height:1.65;
+    white-space:pre-wrap;
+  }
+  .ai-count-row{ display:flex; gap:8px; margin-top:10px; }
+  .ai-count-row button{
+    flex:1;
+    background:var(--card2);
+    border:1px solid var(--border);
+    color:var(--text);
+    padding:9px;
+    border-radius:10px;
+    font-size:13px;
+    cursor:pointer;
+    font-weight:600;
+  }
+  .ai-count-row button.active{
+    border-color:#00d4aa;
+    color:#00d4aa;
+    background:#0a1f1a;
+  }
+
   .storage-note{
     background:#1b2436;
     border:1px solid var(--border);
@@ -912,6 +1095,7 @@
   <button class="tab-btn" id="tabPyqBtn" onclick="switchTab('pyq')">🏆 PYQ Corner</button>
   <button class="tab-btn" id="tabPwBtn" onclick="switchTab('pw')">🎓 PW Corner</button>
   <button class="tab-btn" id="tabModuleBtn" onclick="switchTab('module')">🧩 Module Mania</button>
+  <button class="tab-btn" id="tabAiBtn" onclick="switchTab('ai')">🤖 AI Tutor</button>
 </div>
 
 <!-- NOTES SECTION -->
@@ -982,6 +1166,55 @@
     <button class="upload-btn-secondary" onclick="createModuleFolder()">+ Naya Module Banao</button>
   </div>
   <div class="chapter-list" id="moduleFolderList"></div>
+</div>
+
+<!-- AI TUTOR SECTION -->
+<div class="section" id="aiSection">
+  <div class="storage-note">
+    🤖 AI Tutor — Google Gemini se powered (free). Doubt poocho, apni PDF se quiz banwao, ya notes samjho.
+  </div>
+
+  <div class="ai-key-box" id="aiKeyBox"></div>
+
+  <div id="aiFeaturesWrap" style="display:none;">
+    <div class="ai-subtabs">
+      <button class="ai-subtab-btn active" id="aiSubBtnChat" onclick="switchAiSubTab('chat')">💬 Doubt Chat</button>
+      <button class="ai-subtab-btn" id="aiSubBtnQuiz" onclick="switchAiSubTab('quiz')">📝 PDF se Quiz</button>
+      <button class="ai-subtab-btn" id="aiSubBtnExplain" onclick="switchAiSubTab('explain')">📖 Notes Samjhao</button>
+    </div>
+
+    <!-- Doubt Chat panel -->
+    <div class="ai-panel active" id="aiPanelChat">
+      <div class="ai-chat-messages" id="aiChatMessages"></div>
+      <div class="ai-chat-input-row">
+        <textarea id="aiChatInput" rows="1" placeholder="Apna NEET doubt yahan likho..."></textarea>
+        <button class="ai-send-btn" onclick="sendAiChatMessage()">➤</button>
+      </div>
+    </div>
+
+    <!-- PDF to Quiz panel -->
+    <div class="ai-panel" id="aiPanelQuiz">
+      <div class="ai-field-label">PDF chuno (apni upload ki hui notes se)</div>
+      <select class="ai-select" id="aiQuizPdfSelect"></select>
+      <div class="ai-field-label">Kitne questions banane hain?</div>
+      <div class="ai-count-row" id="aiQuizCountRow">
+        <button onclick="setAiQuizCount(5)" data-count="5">5</button>
+        <button onclick="setAiQuizCount(10)" data-count="10" class="active">10</button>
+        <button onclick="setAiQuizCount(15)" data-count="15">15</button>
+        <button onclick="setAiQuizCount(20)" data-count="20">20</button>
+      </div>
+      <button class="ai-generate-btn" onclick="generateAiQuiz()">✨ Quiz Banao</button>
+      <div class="ai-result-box" id="aiQuizStatus" style="display:none;"></div>
+    </div>
+
+    <!-- Notes Explain panel -->
+    <div class="ai-panel" id="aiPanelExplain">
+      <div class="ai-field-label">PDF chuno</div>
+      <select class="ai-select" id="aiExplainPdfSelect"></select>
+      <button class="ai-generate-btn" onclick="generateAiExplain()">✨ Samjhao</button>
+      <div class="ai-result-box" id="aiExplainResult" style="display:none;"></div>
+    </div>
+  </div>
 </div>
 
 <!-- PDF Viewer Modal -->
@@ -1171,14 +1404,17 @@ function switchTab(tab){
   document.getElementById('pyqSection').classList.toggle('active', tab === 'pyq');
   document.getElementById('pwSection').classList.toggle('active', tab === 'pw');
   document.getElementById('moduleSection').classList.toggle('active', tab === 'module');
+  document.getElementById('aiSection').classList.toggle('active', tab === 'ai');
   document.getElementById('tabNotesBtn').classList.toggle('active', tab === 'notes');
   document.getElementById('tabQuizBtn').classList.toggle('active', tab === 'quiz');
   document.getElementById('tabBioBtn').classList.toggle('active', tab === 'bio');
   document.getElementById('tabPyqBtn').classList.toggle('active', tab === 'pyq');
   document.getElementById('tabPwBtn').classList.toggle('active', tab === 'pw');
   document.getElementById('tabModuleBtn').classList.toggle('active', tab === 'module');
+  document.getElementById('tabAiBtn').classList.toggle('active', tab === 'ai');
   if(tab === 'pw') renderPwSubjectTabs();
   if(tab === 'module') renderModuleFolders();
+  if(tab === 'ai') renderAiKeyBox();
 }
 
 function handleFileUpload(event){
@@ -2885,6 +3121,285 @@ function deleteFile(id){
     renderChapterList();
     renderPwFolders();
   };
+}
+
+// ============ AI TUTOR (Google Gemini — free API) ============
+const GEMINI_KEY_STORAGE = 'geminiApiKey';
+const GEMINI_MODEL = 'gemini-2.0-flash';
+let aiChatHistory = []; // {role:'user'|'model', text}
+let aiQuizCount = 10;
+
+function getGeminiKey(){
+  return localStorage.getItem(GEMINI_KEY_STORAGE) || '';
+}
+
+function renderAiKeyBox(){
+  const box = document.getElementById('aiKeyBox');
+  if(!box) return;
+  const key = getGeminiKey();
+  const wrap = document.getElementById('aiFeaturesWrap');
+  if(key){
+    box.innerHTML = `
+      <div class="ai-key-saved">
+        <span>✅ Gemini API key saved hai (sirf is device par)</span>
+        <button onclick="changeGeminiKey()">Badlo</button>
+      </div>`;
+    if(wrap) wrap.style.display = 'block';
+    populateAiPdfSelects();
+    renderAiChatMessages();
+  }else{
+    box.innerHTML = `
+      <p>Free Gemini API key chahiye: <b>aistudio.google.com/apikey</b> pe jao → Google account se login karo → "Create API key" dabao → key copy karke yahan paste karo. Key sirf isi device/browser mein save hogi, kahi bahar nahi jaati.</p>
+      <div class="ai-key-row">
+        <input type="text" id="geminiKeyInput" placeholder="Apni Gemini API key paste karo">
+        <button onclick="saveGeminiKey()">Save</button>
+      </div>`;
+    if(wrap) wrap.style.display = 'none';
+  }
+}
+
+function saveGeminiKey(){
+  const input = document.getElementById('geminiKeyInput');
+  const val = (input.value || '').trim();
+  if(!val){ alert('Pehle key paste karo'); return; }
+  localStorage.setItem(GEMINI_KEY_STORAGE, val);
+  renderAiKeyBox();
+}
+
+function changeGeminiKey(){
+  if(!confirm('Purani key hatani hai aur nayi daalni hai?')) return;
+  localStorage.removeItem(GEMINI_KEY_STORAGE);
+  renderAiKeyBox();
+}
+
+function switchAiSubTab(tab){
+  document.getElementById('aiPanelChat').classList.toggle('active', tab === 'chat');
+  document.getElementById('aiPanelQuiz').classList.toggle('active', tab === 'quiz');
+  document.getElementById('aiPanelExplain').classList.toggle('active', tab === 'explain');
+  document.getElementById('aiSubBtnChat').classList.toggle('active', tab === 'chat');
+  document.getElementById('aiSubBtnQuiz').classList.toggle('active', tab === 'quiz');
+  document.getElementById('aiSubBtnExplain').classList.toggle('active', tab === 'explain');
+}
+
+function escapeHtmlAi(str){
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+// ---- Core Gemini call ----
+async function callGemini(contents, systemText){
+  const key = getGeminiKey();
+  if(!key) throw new Error('API key missing');
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${encodeURIComponent(key)}`;
+  const body = { contents };
+  if(systemText) body.systemInstruction = { parts: [{ text: systemText }] };
+  const res = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body)
+  });
+  if(!res.ok){
+    const errText = await res.text().catch(() => '');
+    throw new Error('Gemini API error ' + res.status + ': ' + errText.slice(0,200));
+  }
+  const data = await res.json();
+  const candidate = data.candidates && data.candidates[0];
+  const parts = candidate && candidate.content && candidate.content.parts;
+  if(!parts || !parts.length) throw new Error('Khali response mila AI se');
+  return parts.map(p => p.text || '').join('');
+}
+
+// ---- Doubt chat ----
+function renderAiChatMessages(){
+  const el = document.getElementById('aiChatMessages');
+  if(!el) return;
+  if(aiChatHistory.length === 0){
+    el.innerHTML = '<div class="empty-state">Koi bhi NEET doubt (Physics/Chem/Bio) yahan pucho 👇</div>';
+    return;
+  }
+  el.innerHTML = aiChatHistory.map(m =>
+    `<div class="ai-msg ${m.role === 'user' ? 'user' : 'bot'}">${escapeHtmlAi(m.text)}</div>`
+  ).join('');
+  el.scrollTop = el.scrollHeight;
+}
+
+async function sendAiChatMessage(){
+  const input = document.getElementById('aiChatInput');
+  const text = (input.value || '').trim();
+  if(!text) return;
+  if(!getGeminiKey()){ alert('Pehle API key save karo'); return; }
+  aiChatHistory.push({ role: 'user', text });
+  input.value = '';
+  renderAiChatMessages();
+
+  const el = document.getElementById('aiChatMessages');
+  const loadingDiv = document.createElement('div');
+  loadingDiv.className = 'ai-msg bot loading';
+  loadingDiv.textContent = 'Soch raha hoon...';
+  el.appendChild(loadingDiv);
+  el.scrollTop = el.scrollHeight;
+
+  try{
+    const contents = aiChatHistory.map(m => ({
+      role: m.role === 'user' ? 'user' : 'model',
+      parts: [{ text: m.text }]
+    }));
+    const systemText = 'Tum ek friendly NEET (Physics, Chemistry, Biology) tutor ho. Hinglish (Hindi+English mix) mein simple, clear, exam-focused jawab do. Zaroorat ho to steps ya points mein samjhao. Zyada lamba mat likho jab tak diagram/derivation na chahiye ho.';
+    const reply = await callGemini(contents, systemText);
+    aiChatHistory.push({ role: 'model', text: reply });
+  }catch(err){
+    console.error(err);
+    aiChatHistory.push({ role: 'model', text: '❌ Error aayi: ' + err.message });
+  }
+  renderAiChatMessages();
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const chatInput = document.getElementById('aiChatInput');
+  if(chatInput){
+    chatInput.addEventListener('keydown', (e) => {
+      if(e.key === 'Enter' && !e.shiftKey){
+        e.preventDefault();
+        sendAiChatMessage();
+      }
+    });
+  }
+});
+
+// ---- Helpers: list uploaded PDFs for dropdowns ----
+function getAllPdfRecords(){
+  return new Promise((resolve) => {
+    if(!db){ resolve([]); return; }
+    const tx = db.transaction(STORE_NAME, 'readonly');
+    const req = tx.objectStore(STORE_NAME).getAll();
+    req.onsuccess = () => resolve((req.result || []).filter(f => f.type === 'pdf'));
+    req.onerror = () => resolve([]);
+  });
+}
+
+async function populateAiPdfSelects(){
+  const files = await getAllPdfRecords();
+  const options = files.length
+    ? files.map(f => `<option value="${f.id}">${escapeHtmlAi(f.name)}</option>`).join('')
+    : '<option value="">-- koi PDF upload nahi hui, pehle Notes tab se upload karo --</option>';
+  const quizSel = document.getElementById('aiQuizPdfSelect');
+  const explainSel = document.getElementById('aiExplainPdfSelect');
+  if(quizSel) quizSel.innerHTML = options;
+  if(explainSel) explainSel.innerHTML = options;
+}
+
+function extractPdfText(fileId, maxChars){
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(STORE_NAME, 'readonly');
+    const req = tx.objectStore(STORE_NAME).get(Number(fileId));
+    req.onsuccess = async () => {
+      const record = req.result;
+      if(!record || !record.data){ reject(new Error('PDF nahi mili')); return; }
+      try{
+        const bufferCopy = record.data.slice(0);
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+        const pdf = await pdfjsLib.getDocument({ data: bufferCopy }).promise;
+        let text = '';
+        for(let i = 1; i <= pdf.numPages; i++){
+          if(text.length > maxChars) break;
+          const page = await pdf.getPage(i);
+          const content = await page.getTextContent();
+          text += content.items.map(it => it.str).join(' ') + '\n';
+        }
+        resolve(text.slice(0, maxChars));
+      }catch(err){ reject(err); }
+    };
+    req.onerror = () => reject(new Error('PDF read error'));
+  });
+}
+
+// ---- PDF → Quiz generation ----
+function setAiQuizCount(n){
+  aiQuizCount = n;
+  document.querySelectorAll('#aiQuizCountRow button').forEach(b => {
+    b.classList.toggle('active', Number(b.dataset.count) === n);
+  });
+}
+
+async function generateAiQuiz(){
+  const sel = document.getElementById('aiQuizPdfSelect');
+  const fileId = sel.value;
+  const statusEl = document.getElementById('aiQuizStatus');
+  if(!fileId){ alert('Pehle PDF chuno'); return; }
+  if(!getGeminiKey()){ alert('Pehle API key save karo'); return; }
+
+  statusEl.style.display = 'block';
+  statusEl.textContent = '📖 PDF padh raha hoon...';
+
+  try{
+    const text = await extractPdfText(fileId, 18000);
+    if(!text.trim()){ statusEl.textContent = '❌ Is PDF se text nahi nikal paya (shayad ye scanned images hain).'; return; }
+
+    statusEl.textContent = '🤖 AI questions bana raha hai...';
+    const prompt = `Neeche diye gaye NEET study notes se ${aiQuizCount} multiple-choice practice questions banao. Sirf JSON array return karo, koi extra text nahi. Har question is format mein ho:
+{"tag":"short topic name","text":"question text","options":["a","b","c","d"],"correct":0,"explain":"chota sa explanation"}
+"correct" options array ka 0-based index hai. Questions NEET exam level ke hone chahiye, notes ke content par based.
+
+NOTES:
+${text}`;
+
+    const raw = await callGemini([{ role: 'user', parts: [{ text: prompt }] }]);
+    const cleaned = raw.replace(/```json|```/g, '').trim();
+    let parsed;
+    try{ parsed = JSON.parse(cleaned); }
+    catch(e){ statusEl.textContent = '❌ AI ka response valid JSON nahi tha, dobara try karo.'; return; }
+    if(!Array.isArray(parsed) || parsed.length === 0){ statusEl.textContent = '❌ AI ne koi valid questions nahi banaye, dobara try karo.'; return; }
+
+    for(let i = 0; i < parsed.length; i++){
+      const err = validateChapterQuestion(parsed[i], i);
+      if(err){ statusEl.textContent = '❌ AI output mein dikkat: ' + err; return; }
+    }
+
+    const questions = parsed.map(q => ({
+      tag: q.tag || 'AI Quiz',
+      text: q.text,
+      options: q.options,
+      correct: q.correct,
+      explain: q.explain || ''
+    }));
+
+    statusEl.style.display = 'none';
+    const fileName = sel.options[sel.selectedIndex].textContent;
+    openQuizViewer('🤖 AI Quiz — ' + fileName, questions, false);
+  }catch(err){
+    console.error(err);
+    statusEl.textContent = '❌ Error: ' + err.message;
+  }
+}
+
+// ---- Notes summarize/explain ----
+async function generateAiExplain(){
+  const sel = document.getElementById('aiExplainPdfSelect');
+  const fileId = sel.value;
+  const resultEl = document.getElementById('aiExplainResult');
+  if(!fileId){ alert('Pehle PDF chuno'); return; }
+  if(!getGeminiKey()){ alert('Pehle API key save karo'); return; }
+
+  resultEl.style.display = 'block';
+  resultEl.textContent = '📖 PDF padh raha hoon...';
+
+  try{
+    const text = await extractPdfText(fileId, 18000);
+    if(!text.trim()){ resultEl.textContent = '❌ Is PDF se text nahi nikal paya (shayad ye scanned images hain).'; return; }
+
+    resultEl.textContent = '🤖 Samjha raha hoon...';
+    const prompt = `Tum ek NEET tutor ho. Neeche diye notes ko ek student ke liye Hinglish mein simple bhasha mein samjhao — key concepts, important points, aur agar koi tricky part hai to use highlight karo. Bullet points use karo. Bahut lamba mat karo, exam-relevant important cheezein cover karo.
+
+NOTES:
+${text}`;
+
+    const explanation = await callGemini([{ role: 'user', parts: [{ text: prompt }] }]);
+    resultEl.textContent = explanation;
+  }catch(err){
+    console.error(err);
+    resultEl.textContent = '❌ Error: ' + err.message;
+  }
 }
 
 init();
