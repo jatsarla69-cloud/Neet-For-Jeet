@@ -1531,7 +1531,7 @@ header p{font-size:11.5px;margin-top:2px;}
       '.qe-controls{position:relative;z-index:5;flex-shrink:0;}',
       '.qe-next-visible{display:inline-flex!important;visibility:visible!important;opacity:1!important;align-items:center!important;justify-content:center!important;min-height:42px!important;min-width:145px!important;}',
       '.qe-diagram-ref{margin:10px 0 12px;padding:11px 12px;border:1px dashed rgba(162,155,254,.45);border-radius:12px;background:rgba(108,92,231,.08);font-size:12px;line-height:1.5;color:var(--muted,#9aa3b2);}',
-      '.qe-diagram-panel{margin:10px 0 14px;padding:12px;border:1px solid rgba(162,155,254,.45);border-radius:14px;background:rgba(108,92,231,.08);}',
+      '.qe-diagram-panel{display:block;visibility:visible;margin:10px 0 14px;padding:12px;border:1px solid rgba(162,155,254,.45);border-radius:14px;background:rgba(108,92,231,.08);}',
       '.qe-diagram-title{font-weight:800;margin-bottom:8px;}',
       '.qe-diagram-box{width:100%;overflow:hidden;border-radius:10px;padding:6px;background:rgba(255,255,255,.04);}',
       '.qe-diagram-box svg{display:block;width:100%;height:auto;}',
@@ -1715,7 +1715,7 @@ function escapeHtml(s){
     .replace(/'/g,'&#39;');
 }
 function renderPGDDiagram(q){
-  return '<div class="qe-diagram-panel"><div class="qe-diagram-title">📘 '+escapeHtml(q.diagramTitle||'NCERT Diagram')+'</div><div class="qe-diagram-box">'+(q.diagramSvg||'')+'</div><div class="qe-diagram-note">NCERT figure-based study redraw • English + हिन्दी</div></div>';
+  return '<div class="qe-diagram-panel"><div class="qe-diagram-title">🖼️ '+escapeHtml(q.diagramTitle||'NCERT Diagram')+'</div><div class="qe-diagram-box">'+(q.diagramSvg||'')+'</div><div class="qe-diagram-note">NCERT figure-based study redraw • English + हिन्दी</div></div>';
 }
 
 function showControls(autoDelayMs) {
@@ -3049,9 +3049,45 @@ const PLANT_GROWTH_2027_EXPECTED = [{"textEn":"Plant growth is best defined as:"
 function seedPlantGrowth2027Expected(){
   const bioIdx = 12; // Class 11 — Plant Growth and Development
   const existing = loadChapterQuestions(bioIdx);
-  const existingIds = new Set(existing.map(q => q.sourceId).filter(Boolean));
-  const add = PLANT_GROWTH_2027_EXPECTED.filter(q => !existingIds.has(q.sourceId));
-  if(add.length) saveChapterQuestions(bioIdx, existing.concat(add));
+  const expected = PLANT_GROWTH_2027_EXPECTED.slice();
+
+  // IMPORTANT: replace the old Plant Growth practice-bank snapshot with the
+  // current 150-question version so already-synced Firebase data cannot hide
+  // the newly added diagram questions. PYQ Corner is a separate data store.
+  if(!existing.length){
+    saveChapterQuestions(bioIdx, expected);
+  } else {
+    const diagramQs = expected.filter(q => q.diagram);
+    const nonDiagramExpected = expected.filter(q => !q.diagram);
+    const existingDiagramCount = existing.filter(q => q.diagram).length;
+    const hasCurrentDiagrams = existing.filter(q =>
+      q.diagram && String(q.sourceId || '').startsWith('PGD-2027-NCERT-FIG-')
+    ).length >= diagramQs.length;
+
+    if(!hasCurrentDiagrams){
+      // Preserve the chapter's 150-question layout: update the final 11
+      // Plant-Growth slots with the real diagram-based study questions.
+      let merged = existing.slice(0, Math.max(0, existing.length - diagramQs.length));
+      // If the old bank had fewer than 139 questions, fill from the expected
+      // non-diagram bank first.
+      if(merged.length < 139){
+        const used = new Set(merged.map(q => q.sourceId).filter(Boolean));
+        for(const q of nonDiagramExpected){
+          if(merged.length >= 139) break;
+          if(!used.has(q.sourceId)){ merged.push(q); used.add(q.sourceId); }
+        }
+      }
+      merged = merged.slice(0,139).concat(diagramQs);
+      // Ensure exactly 150 questions when the chapter bank is meant to be 150.
+      if(merged.length < 150) {
+        for(const q of expected){
+          if(merged.length >= 150) break;
+          if(!merged.some(x => x.sourceId === q.sourceId)) merged.push(q);
+        }
+      }
+      saveChapterQuestions(bioIdx, merged.slice(0,150));
+    }
+  }
   if(typeof renderChapterList === 'function') renderChapterList();
   if(typeof updateDashboardStats === 'function') updateDashboardStats();
 }
@@ -3381,6 +3417,7 @@ async function renderChapterList(){
 
     const card = document.createElement('div');
     card.className = 'chapter-card' + (isExpanded ? ' expanded' : '');
+    card.setAttribute('data-qcount', String(questions.length));
 
     const pdfListHtml = pdfs.length
       ? pdfs.map(f => `
@@ -3523,10 +3560,22 @@ function openChapterQuiz(idx){
 
   const questions = rawQuestions.map(q => ({
     text: q.text,
-    options: q.options,
+    textEn: q.textEn || q.text,
+    textHi: q.textHi || '',
+    options: q.options || q.optionsEn || [],
+    optionsEn: q.optionsEn || q.options || [],
+    optionsHi: q.optionsHi || [],
     correct: q.correct,
     explain: q.explain || '',
-    tag: q.tag || ''
+    explainEn: q.explainEn || q.explain || '',
+    explainHi: q.explainHi || '',
+    tag: q.tag || '',
+    diagram: !!q.diagram,
+    diagramTitle: q.diagramTitle || '',
+    diagramSvg: q.diagramSvg || '',
+    diagramRef: q.diagramRef || '',
+    diagramSource: q.diagramSource || '',
+    sourceId: q.sourceId || ''
   }));
 
   openQuizViewer(currentBioChapters()[idx] + ' — Quiz', questions, false);
