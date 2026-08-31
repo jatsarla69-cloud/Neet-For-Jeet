@@ -194,8 +194,6 @@
     flex-direction:column;
     gap:2px;
     overflow:hidden;
-    flex:1;
-    min-width:0;
   }
   .file-name{
     font-size:14px;
@@ -203,7 +201,7 @@
     white-space:nowrap;
     overflow:hidden;
     text-overflow:ellipsis;
-    max-width:100%;
+    max-width:420px;
   }
   .file-date{
     font-size:11px;
@@ -437,22 +435,15 @@
   .chapter-menu-btn:active{
     background:rgba(255,255,255,0.08);
   }
-  .chapter-menu-btn.mini{
-    font-size:16px;
-    padding:3px 7px;
-  }
   .chapter-menu-dropdown{
     display:none;
-    position:absolute;
-    top:100%;
-    right:0;
-    margin-top:4px;
+    position:fixed;
     background:#1e222c;
     border:1px solid var(--border);
     border-radius:10px;
     overflow:hidden;
-    z-index:20;
-    box-shadow:0 6px 20px rgba(0,0,0,0.4);
+    z-index:500;
+    box-shadow:0 6px 20px rgba(0,0,0,0.45);
     min-width:190px;
   }
   .chapter-menu-dropdown.show{
@@ -507,26 +498,21 @@
   .chapter-mini-list{
     display:flex;
     flex-direction:column;
-    gap:6px;
+    gap:10px;
     margin-bottom:8px;
   }
   .chapter-mini-item{
     display:flex;
     justify-content:space-between;
     align-items:center;
-    gap:8px;
     background:#1e222c;
     border:1px solid var(--border);
-    border-radius:8px;
-    padding:8px 10px;
+    border-radius:10px;
+    padding:12px 14px;
     font-size:12.5px;
-  }
-  .chapter-mini-item.pw-pdf-item{
-    padding:10px 12px;
+    gap:10px;
   }
   .chapter-mini-item span{
-    flex:1;
-    min-width:0;
     overflow:hidden;
     text-overflow:ellipsis;
     white-space:nowrap;
@@ -535,15 +521,13 @@
     display:flex;
     flex-direction:column;
     gap:3px;
-    flex:1;
-    min-width:0;
     overflow:hidden;
+    flex:1;
     cursor:pointer;
   }
   .chapter-mini-name{
-    font-size:12.5px;
+    font-size:13.5px;
     font-weight:700;
-    color:var(--text);
     overflow:hidden;
     text-overflow:ellipsis;
     white-space:nowrap;
@@ -566,6 +550,20 @@
     color:var(--muted);
     font-size:15px;
     cursor:pointer;
+  }
+  .mini-menu-btn{
+    background:transparent;
+    border:none;
+    color:var(--muted);
+    font-size:19px;
+    line-height:1;
+    padding:8px 10px;
+    border-radius:8px;
+    cursor:pointer;
+    flex-shrink:0;
+  }
+  .mini-menu-btn:active{
+    background:rgba(255,255,255,0.08);
   }
   .chapter-empty-note{
     font-size:12px;
@@ -693,6 +691,7 @@
     background:#1c1f27;
     border:1px solid var(--border);
     border-radius:14px;
+    overflow:hidden;
     margin-bottom:10px;
     cursor:pointer;
   }
@@ -701,8 +700,6 @@
     padding:16px 44px 14px 14px;
     background:linear-gradient(135deg,#2a1f47 0%,#1c1533 100%);
     min-height:64px;
-    border-radius:14px 14px 0 0;
-    overflow:hidden;
   }
   .pw-lecture-num-badge{
     position:absolute;
@@ -772,20 +769,15 @@
     justify-content:space-between;
     align-items:center;
     gap:8px;
-    padding:4px 10px 12px 12px;
+    padding:6px 8px 14px 12px;
   }
   .pw-lecture-title-row span{
-    flex:1;
-    min-width:0;
     font-size:12.5px;
     color:var(--text);
     font-weight:600;
     overflow:hidden;
     text-overflow:ellipsis;
     white-space:nowrap;
-  }
-  .pw-lecture-title-row .chapter-menu-wrap{
-    flex-shrink:0;
   }
 
   /* ===== PW Corner — chapter inner sub-tabs (Lectures | DPP | Notes) ===== */
@@ -1174,7 +1166,7 @@
 <div class="tabs">
   <button class="tab-btn active" id="tabNotesBtn" onclick="switchTab('notes')">📄 Notes</button>
   <button class="tab-btn" id="tabQuizBtn" onclick="switchTab('quiz')">🧠 Quiz</button>
-  <button class="tab-btn" id="tabBioBtn" onclick="switchTab('bio')">🧬 Bio 11th</button>
+  <button class="tab-btn" id="tabBioBtn" onclick="switchTab('bio')">🧬 Biology</button>
   <button class="tab-btn" id="tabPyqBtn" onclick="switchTab('pyq')">🏆 PYQ Corner</button>
   <button class="tab-btn" id="tabPwBtn" onclick="switchTab('pw')">🎓 PW Corner</button>
   <button class="tab-btn" id="tabModuleBtn" onclick="switchTab('module')">🧩 Module Mania</button>
@@ -1198,11 +1190,12 @@
   <div class="file-list" id="fileList"></div>
 </div>
 
-<!-- BIOLOGY CLASS 11 SECTION -->
+<!-- BIOLOGY SECTION -->
 <div class="section" id="bioSection">
   <div class="storage-note">
-    🧬 Biology Class 11 — 19 NCERT chapters. Har chapter mein apni PDF notes aur questions (JSON) alag se add kar sakte ho.
+    🧬 Biology — Class 11th (19 chapters) aur Class 12th (16 chapters) dono NCERT chapters yahan hain. Har chapter mein apni PDF notes aur questions (JSON) alag se add kar sakte ho.
   </div>
+  <div class="pw-subject-tabs" id="bioClassTabs"></div>
   <div class="chapter-list" id="chapterList"></div>
 </div>
 
@@ -1356,7 +1349,7 @@ const STORE_NAME = 'pdfs';
 let db;
 let currentPageId = null;
 
-const BIO_CHAPTERS = [
+const BIO_CHAPTERS_11 = [
   "1. The Living World",
   "2. Biological Classification",
   "3. Plant Kingdom",
@@ -1378,22 +1371,91 @@ const BIO_CHAPTERS = [
   "19. Chemical Coordination and Integration"
 ];
 
+const BIO_CHAPTERS_12 = [
+  "1. Reproduction in Organisms",
+  "2. Sexual Reproduction in Flowering Plants",
+  "3. Human Reproduction",
+  "4. Reproductive Health",
+  "5. Principles of Inheritance and Variation",
+  "6. Molecular Basis of Inheritance",
+  "7. Evolution",
+  "8. Human Health and Disease",
+  "9. Strategies for Enhancement in Food Production",
+  "10. Microbes in Human Welfare",
+  "11. Biotechnology: Principles and Processes",
+  "12. Biotechnology and its Applications",
+  "13. Organisms and Populations",
+  "14. Ecosystem",
+  "15. Biodiversity and Conservation",
+  "16. Environmental Issues"
+];
+
+let currentBioClass = '11'; // '11' or '12'
+
+function currentBioChapters(){
+  return currentBioClass === '11' ? BIO_CHAPTERS_11 : BIO_CHAPTERS_12;
+}
+
+// Class-11 chapters keep their old plain numeric storage key (unchanged, for
+// backward compatibility with existing PDFs/questions already saved). Class-12
+// chapters get a distinct prefixed key so they never collide with class-11 data.
+function bioStoreKey(idx){
+  return currentBioClass === '11' ? idx : ('12_' + idx);
+}
+
+function switchBioClass(cls){
+  if(currentBioClass === cls) return;
+  currentBioClass = cls;
+  expandedChapters.clear();
+  renderBioClassTabs();
+  renderChapterList();
+}
+
+function renderBioClassTabs(){
+  const container = document.getElementById('bioClassTabs');
+  if(!container) return;
+  container.innerHTML = `
+    <button class="pw-subject-btn${currentBioClass === '11' ? ' active' : ''}" onclick="switchBioClass('11')">🧬 Class 11th</button>
+    <button class="pw-subject-btn${currentBioClass === '12' ? ' active' : ''}" onclick="switchBioClass('12')">🧬 Class 12th</button>
+  `;
+}
+
 const expandedChapters = new Set();
 
-// ============ Generic chapter three-dot menu (Delete etc.) ============
+// ============ Generic three-dot menu (Delete etc.) — used for chapters,
+// folders, lectures and individual PDF items across the whole app.
+// Positioned as position:fixed (computed from the trigger button's own
+// on-screen position) so it always renders on top and is never clipped by
+// a card's overflow:hidden, even when that card is collapsed.
 function closeAllChapterMenus(){
   document.querySelectorAll('.chapter-menu-dropdown.show').forEach(el => el.classList.remove('show'));
 }
-function toggleChapterMenu(menuId){
+function toggleChapterMenu(btn, menuId){
   const el = document.getElementById('menu_' + menuId);
   if(!el) return;
   const willShow = !el.classList.contains('show');
   closeAllChapterMenus();
-  if(willShow) el.classList.add('show');
+  if(willShow){
+    const rect = btn.getBoundingClientRect();
+    el.style.display = 'block'; // measure real height before placing
+    const menuW = el.offsetWidth || 190;
+    const menuH = el.offsetHeight || 90;
+    el.style.display = '';
+    let left = rect.right - menuW;
+    if(left < 8) left = 8;
+    if(left + menuW > window.innerWidth - 8) left = window.innerWidth - menuW - 8;
+    let top = rect.bottom + 4;
+    if(top + menuH > window.innerHeight - 8) top = rect.top - menuH - 4;
+    if(top < 8) top = 8;
+    el.style.left = left + 'px';
+    el.style.top = top + 'px';
+    el.classList.add('show');
+  }
 }
 document.addEventListener('click', function(e){
   if(!e.target.closest('.chapter-menu-wrap')) closeAllChapterMenus();
 });
+window.addEventListener('scroll', closeAllChapterMenus, true);
 
 // Open/create IndexedDB
 function openDB(){
@@ -1414,6 +1476,7 @@ async function init(){
   try{
     db = await openDB();
     loadFileList();
+    renderBioClassTabs();
     renderChapterList();
   }catch(err){
     console.error('DB init failed', err);
@@ -1471,6 +1534,7 @@ function switchTab(tab){
   document.getElementById('tabModuleBtn').classList.toggle('active', tab === 'module');
   document.getElementById('tabPlannerBtn').classList.toggle('active', tab === 'planner');
   if(tab === 'pw') renderPwSubjectTabs();
+  if(tab === 'bio') renderBioClassTabs();
   if(tab === 'module') renderModuleFolders();
   if(tab === 'planner') renderPlanner();
 }
@@ -1622,9 +1686,9 @@ function loadFileList(){
           <div class="file-date">${file.date}</div>
         </div>
         <div class="chapter-menu-wrap">
-          <button class="chapter-menu-btn" onclick="event.stopPropagation(); toggleChapterMenu('file_${file.id}')">⋮</button>
+          <button class="mini-menu-btn" onclick="event.stopPropagation(); toggleChapterMenu(this, 'file_${file.id}')">⋮</button>
           <div class="chapter-menu-dropdown" id="menu_file_${file.id}">
-            <button class="chapter-menu-item" onclick="event.stopPropagation(); closeAllChapterMenus(); viewFile(${file.id})">👁️ Dekho</button>
+            <button class="chapter-menu-item" onclick="event.stopPropagation(); closeAllChapterMenus(); viewFile(${file.id})">👁️ View Karo</button>
             <button class="chapter-menu-item danger" onclick="event.stopPropagation(); closeAllChapterMenus(); deleteFile(${file.id})">🗑️ Delete Karo</button>
           </div>
         </div>
@@ -1689,7 +1753,7 @@ function renderPageImages(images, id){
 // ============ BIOLOGY CLASS 11 — Chapter list, PDFs, Questions, Quiz ============
 
 function bioQuestionsKey(idx){
-  return String(idx);
+  return String(bioStoreKey(idx));
 }
 
 function loadChapterQuestions(idx){
@@ -1707,7 +1771,7 @@ async function getChapterPdfs(idx){
     const store = tx.objectStore(STORE_NAME);
     const req = store.getAll();
     req.onsuccess = () => {
-      resolve(req.result.filter(f => f.chapterIdx === idx));
+      resolve(req.result.filter(f => f.chapterIdx === bioStoreKey(idx)));
     };
     req.onerror = () => resolve([]);
   });
@@ -1724,8 +1788,8 @@ async function renderChapterList(){
   });
 
   container.innerHTML = '';
-  BIO_CHAPTERS.forEach((chapterName, idx) => {
-    const pdfs = allFiles.filter(f => f.chapterIdx === idx);
+  currentBioChapters().forEach((chapterName, idx) => {
+    const pdfs = allFiles.filter(f => f.chapterIdx === bioStoreKey(idx));
     const questions = loadChapterQuestions(idx);
     const isExpanded = expandedChapters.has(idx);
 
@@ -1735,11 +1799,14 @@ async function renderChapterList(){
     const pdfListHtml = pdfs.length
       ? pdfs.map(f => `
           <div class="chapter-mini-item">
-            <span onclick="viewFile(${f.id})">📄 ${f.name}</span>
+            <div class="chapter-mini-info" onclick="viewFile(${f.id})">
+              <div class="chapter-mini-name">📄 ${f.name}</div>
+              <div class="chapter-mini-sub">${f.date || ''}</div>
+            </div>
             <div class="chapter-menu-wrap">
-              <button class="chapter-menu-btn mini" onclick="event.stopPropagation(); toggleChapterMenu('pdf_bio_${idx}_${f.id}')">⋮</button>
-              <div class="chapter-menu-dropdown" id="menu_pdf_bio_${idx}_${f.id}">
-                <button class="chapter-menu-item" onclick="event.stopPropagation(); closeAllChapterMenus(); viewFile(${f.id})">👁️ Dekho</button>
+              <button class="mini-menu-btn" onclick="event.stopPropagation(); toggleChapterMenu(this, 'biopdf_${f.id}')">⋮</button>
+              <div class="chapter-menu-dropdown" id="menu_biopdf_${f.id}">
+                <button class="chapter-menu-item" onclick="event.stopPropagation(); closeAllChapterMenus(); viewFile(${f.id})">👁️ View Karo</button>
                 <button class="chapter-menu-item danger" onclick="event.stopPropagation(); closeAllChapterMenus(); deleteFile(${f.id})">🗑️ Delete Karo</button>
               </div>
             </div>
@@ -1789,7 +1856,7 @@ function handleChapterPdfUpload(event, idx){
   reader.onload = async function(e){
     const record = {
       type: 'pdf',
-      chapterIdx: idx,
+      chapterIdx: bioStoreKey(idx),
       name: file.name,
       date: new Date().toLocaleDateString('en-IN', { day:'numeric', month:'short', year:'numeric' }),
       data: e.target.result
@@ -1876,7 +1943,7 @@ function openChapterQuiz(idx){
     tag: q.tag || ''
   }));
 
-  openQuizViewer(BIO_CHAPTERS[idx] + ' — Quiz', questions, false);
+  openQuizViewer(currentBioChapters()[idx] + ' — Quiz', questions, false);
 }
 
 // ============ Shared quiz viewer (used by Bio, Quiz folders, PYQ Corner, PW auto lecture-quiz) ============
@@ -2337,7 +2404,7 @@ function renderQuizFolders(){
         </div>
         <div class="chapter-head-right">
           <div class="chapter-menu-wrap">
-            <button class="chapter-menu-btn" onclick="event.stopPropagation(); toggleChapterMenu('${folder.id}')">\u22ee</button>
+            <button class="chapter-menu-btn" onclick="event.stopPropagation(); toggleChapterMenu(this, '${folder.id}')">\u22ee</button>
             <div class="chapter-menu-dropdown" id="menu_${folder.id}">
               <button class="chapter-menu-item danger" onclick="event.stopPropagation(); closeAllChapterMenus(); deleteQuizFolder('${folder.id}')">\ud83d\uddd1\ufe0f Folder Delete Karo</button>
             </div>
@@ -2484,7 +2551,7 @@ function renderPyqFolders(){
         </div>
         <div class="chapter-head-right">
           <div class="chapter-menu-wrap">
-            <button class="chapter-menu-btn" onclick="event.stopPropagation(); toggleChapterMenu('${folder.id}')">\u22ee</button>
+            <button class="chapter-menu-btn" onclick="event.stopPropagation(); toggleChapterMenu(this, '${folder.id}')">\u22ee</button>
             <div class="chapter-menu-dropdown" id="menu_${folder.id}">
               <button class="chapter-menu-item danger" onclick="event.stopPropagation(); closeAllChapterMenus(); deletePyqFolder('${folder.id}')">\ud83d\uddd1\ufe0f Folder Delete Karo</button>
             </div>
@@ -2628,7 +2695,7 @@ function renderModuleFolders(){
         </div>
         <div class="chapter-head-right">
           <div class="chapter-menu-wrap">
-            <button class="chapter-menu-btn" onclick="event.stopPropagation(); toggleChapterMenu('${folder.id}')">⋮</button>
+            <button class="chapter-menu-btn" onclick="event.stopPropagation(); toggleChapterMenu(this, '${folder.id}')">⋮</button>
             <div class="chapter-menu-dropdown" id="menu_${folder.id}">
               <button class="chapter-menu-item danger" onclick="event.stopPropagation(); closeAllChapterMenus(); deleteModuleFolder('${folder.id}')">🗑️ Module Delete Karo</button>
             </div>
@@ -2820,10 +2887,10 @@ async function renderPwFolders(){
             </div>
             <div class="pw-lecture-title-row">
               <span>${l.title}</span>
-              <div class="chapter-menu-wrap" onclick="event.stopPropagation();">
-                <button class="chapter-menu-btn mini" onclick="event.stopPropagation(); toggleChapterMenu('pwlec_${folder.id}_${l.id}')">⋮</button>
-                <div class="chapter-menu-dropdown" id="menu_pwlec_${folder.id}_${l.id}">
-                  <button class="chapter-menu-item danger" onclick="event.stopPropagation(); closeAllChapterMenus(); deletePwLecture('${folder.id}','${l.id}')">🗑️ Lecture Hatao</button>
+              <div class="chapter-menu-wrap">
+                <button class="mini-menu-btn" onclick="event.stopPropagation(); toggleChapterMenu(this, 'pwlec_${l.id}')">⋮</button>
+                <div class="chapter-menu-dropdown" id="menu_pwlec_${l.id}">
+                  <button class="chapter-menu-item danger" onclick="event.stopPropagation(); closeAllChapterMenus(); deletePwLecture('${folder.id}','${l.id}')">🗑️ Lecture Delete Karo</button>
                 </div>
               </div>
             </div>
@@ -2834,15 +2901,15 @@ async function renderPwFolders(){
 
     const pdfListHtml = pdfs.length
       ? pdfs.map((f, i) => `
-          <div class="chapter-mini-item pw-pdf-item">
+          <div class="chapter-mini-item">
             <div class="chapter-mini-info" onclick="viewFile(${f.id})">
-              <span class="chapter-mini-name">📄 Lecture ${i + 1} Notes</span>
-              <span class="chapter-mini-sub">${f.name}</span>
+              <div class="chapter-mini-name">📄 Lecture ${i + 1} Notes</div>
+              <div class="chapter-mini-sub">${f.name}</div>
             </div>
             <div class="chapter-menu-wrap">
-              <button class="chapter-menu-btn mini" onclick="event.stopPropagation(); toggleChapterMenu('pwpdf_${folder.id}_${f.id}')">⋮</button>
-              <div class="chapter-menu-dropdown" id="menu_pwpdf_${folder.id}_${f.id}">
-                <button class="chapter-menu-item" onclick="event.stopPropagation(); closeAllChapterMenus(); viewFile(${f.id})">👁️ Dekho</button>
+              <button class="mini-menu-btn" onclick="event.stopPropagation(); toggleChapterMenu(this, 'pwpdf_${f.id}')">⋮</button>
+              <div class="chapter-menu-dropdown" id="menu_pwpdf_${f.id}">
+                <button class="chapter-menu-item" onclick="event.stopPropagation(); closeAllChapterMenus(); viewFile(${f.id})">👁️ View Karo</button>
                 <button class="chapter-menu-item danger" onclick="event.stopPropagation(); closeAllChapterMenus(); deleteFile(${f.id})">🗑️ Delete Karo</button>
               </div>
             </div>
@@ -2860,7 +2927,7 @@ async function renderPwFolders(){
         </div>
         <div class="chapter-head-right">
           <div class="chapter-menu-wrap">
-            <button class="chapter-menu-btn" onclick="event.stopPropagation(); toggleChapterMenu('${folder.id}')">⋮</button>
+            <button class="chapter-menu-btn" onclick="event.stopPropagation(); toggleChapterMenu(this, '${folder.id}')">⋮</button>
             <div class="chapter-menu-dropdown" id="menu_${folder.id}">
               <button class="chapter-menu-item danger" onclick="event.stopPropagation(); closeAllChapterMenus(); deletePwFolder('${folder.id}')">🗑️ Chapter Delete Karo</button>
             </div>
