@@ -874,13 +874,23 @@
   }
   .viewer-overlay.pyq-quiz-mode .qe-card{
     background:linear-gradient(160deg,#1c1608 0%,#171a21 60%);
-    border:1px solid #4a3300;
+    border:2px solid #4a3300;
     box-shadow:0 0 26px rgba(255,176,32,0.10);
   }
   .viewer-overlay.pyq-quiz-mode .qe-tag{
     background:#4a3300;
     color:#ffd27a;
   }
+  /* PYQ Corner worksheet look — each question card cycles through a
+     colored border + matching numbered badge, like the PW-style PYQ sheets */
+  .viewer-overlay.pyq-quiz-mode .qe-card[data-qcolor="0"]{ border-color:#7c4dff; box-shadow:0 0 22px rgba(124,77,255,0.16); }
+  .viewer-overlay.pyq-quiz-mode .qe-card[data-qcolor="0"] .qe-num-badge{ background:linear-gradient(135deg,#9c7bff,#7c4dff); }
+  .viewer-overlay.pyq-quiz-mode .qe-card[data-qcolor="1"]{ border-color:#2fbf71; box-shadow:0 0 22px rgba(47,191,113,0.16); }
+  .viewer-overlay.pyq-quiz-mode .qe-card[data-qcolor="1"] .qe-num-badge{ background:linear-gradient(135deg,#3ddc97,#1f8a52); }
+  .viewer-overlay.pyq-quiz-mode .qe-card[data-qcolor="2"]{ border-color:#2f8fef; box-shadow:0 0 22px rgba(47,143,239,0.16); }
+  .viewer-overlay.pyq-quiz-mode .qe-card[data-qcolor="2"] .qe-num-badge{ background:linear-gradient(135deg,#5cb0ff,#2f6fc0); }
+  .viewer-overlay.pyq-quiz-mode .qe-card[data-qcolor="3"]{ border-color:#ff7a1a; box-shadow:0 0 22px rgba(255,122,26,0.16); }
+  .viewer-overlay.pyq-quiz-mode .qe-card[data-qcolor="3"] .qe-num-badge{ background:linear-gradient(135deg,#ffb020,#ff7a1a); }
   .viewer-overlay.pyq-quiz-mode .qe-option{
     background:#1a1608;
     border-color:#3a2a00;
