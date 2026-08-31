@@ -34,8 +34,10 @@
       '.qe-timer-fill{height:100%;width:100%;background:var(--accent,#4f8cff);transition:width 1s linear;}',
       '.qe-timer-fill.qe-timer-warn{background:var(--wrong,#ef5350);}',
       '.qe-timer-label{font-size:12.5px;color:var(--muted,#9aa3b2);min-width:34px;text-align:right;font-weight:700;}',
-      '.qe-card{background:var(--card,#171a21);border:1px solid var(--border,#2a2f3a);border-radius:14px;padding:18px 16px;margin-bottom:14px;}',
-      '.qe-tag{display:inline-block;font-size:11px;background:var(--tag,#3a2f6b);color:#c9c3ff;padding:3px 9px;border-radius:20px;margin-bottom:10px;}',
+      '.qe-card{background:var(--card,#171a21);border:1px solid var(--border,#2a2f3a);border-radius:14px;padding:18px 16px;margin-bottom:14px;transition:border-color .2s;}',
+      '.qe-card-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px;}',
+      '.qe-num-badge{width:32px;height:32px;flex-shrink:0;border-radius:50%;background:var(--accent,#4f8cff);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;box-shadow:0 3px 8px rgba(0,0,0,0.3);}',
+      '.qe-tag{display:inline-block;flex-shrink:0;font-size:11px;background:var(--tag,#3a2f6b);color:#c9c3ff;padding:4px 11px;border-radius:20px;font-weight:700;white-space:nowrap;}',
       '.qe-qtext{font-size:15.5px;line-height:1.6;margin-bottom:14px;white-space:pre-line;}',
       '.qe-options{display:flex;flex-direction:column;gap:8px;}',
       '.qe-option{text-align:left;background:#1e222c;border:1px solid var(--border,#2a2f3a);color:var(--text,#eef1f6);padding:11px 13px;border-radius:10px;font-size:14.5px;cursor:pointer;line-height:1.5;transition:border-color .15s,background .15s;}',
@@ -133,13 +135,17 @@
     function renderQuestion() {
       var q = questions[idx];
       var progressPct = (idx / questions.length) * 100;
+      var qColor = idx % 4;
       container.innerHTML =
         '<div class="qe-wrap">' +
           '<div class="qe-progress">Question <b>' + (idx + 1) + '</b> / ' + questions.length + '</div>' +
           '<div class="qe-progress-track"><div class="qe-progress-fill" style="width:' + progressPct + '%"></div></div>' +
           '<div class="qe-timer-row"><div class="qe-timer-track"><div class="qe-timer-fill"></div></div><div class="qe-timer-label">' + timePerQ + 's</div></div>' +
-          '<div class="qe-card">' +
-            (q.tag ? '<div class="qe-tag">' + q.tag + '</div>' : '') +
+          '<div class="qe-card" data-qcolor="' + qColor + '">' +
+            '<div class="qe-card-head">' +
+              '<div class="qe-num-badge">' + (idx + 1) + '</div>' +
+              (q.tag ? '<div class="qe-tag">' + q.tag + '</div>' : '') +
+            '</div>' +
             '<div class="qe-qtext"></div>' +
             '<div class="qe-options"></div>' +
             '<div class="qe-feedback"></div>' +
