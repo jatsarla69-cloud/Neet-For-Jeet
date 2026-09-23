@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="hi"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Dimension Corner</title>
+<style>
+:root{--bg:#090b18;--card:#14162a;--card2:#1c1f3a;--tx:#eef0ff;--mut:#8b90b8;--ok:#34d399;--bad:#f87171}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--tx);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
+#app{max-width:520px;margin:0 auto;padding:14px 14px 48px}
+h1{font-size:22px;margin:4px 0 2px}
+.sub{color:var(--mut);font-size:13px;margin:0 0 14px}
+.stat{display:flex;gap:8px;margin-bottom:14px}
+.stat div{flex:1;background:var(--card);border-radius:14px;padding:10px;text-align:center;font-size:12px;color:var(--mut)}
+.stat b{display:block;font-size:20px;color:var(--tx)}
+.mode{display:block;width:100%;text-align:left;background:var(--card);border:1.5px solid #2a2e55;border-radius:18px;padding:14px;margin-bottom:10px;color:var(--tx);font:inherit}
+.mode b{font-size:17px}.mode span{display:block;color:var(--mut);font-size:13px;margin-top:3px}
+.lv{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0 14px}
+.lv button,.btn{background:var(--card2);border:1.5px solid #343970;color:var(--tx);border-radius:14px;padding:12px;font:inherit;font-size:14px}
+.btn{width:100%;font-weight:600;margin-top:10px}.btn.p{background:#6d5efc;border-color:#6d5efc}
+.top{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.back{background:none;border:0;color:var(--mut);font-size:15px;padding:6px}
+.bar{flex:1;height:8px;background:var(--card2);border-radius:8px;overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#6d5efc,#34d399);transition:width .3s}
+.xp{font-size:13px;color:var(--mut)}
+.cur{background:var(--card);border-radius:20px;padding:22px 12px;text-align:center;margin-bottom:12px;border:1.5px dashed #343970;min-height:96px}
+.cur small{color:var(--mut);font-size:12px}.cur div{font-size:24px;font-weight:700;margin-top:6px}
+.cur.pop{animation:pop .25s}
+@keyframes pop{from{transform:scale(.92);opacity:.4}to{transform:none;opacity:1}}
+.houses{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.house{border:2px solid var(--c);background:linear-gradient(var(--t),var(--t)),var(--card);border-radius:18px;padding:10px;min-height:118px;text-align:left;color:var(--tx);font:inherit;position:relative}
+.house .e{font-size:22px}.house .d{font-weight:700;font-size:15px;margin-top:2px;color:var(--c)}
+.house .ch{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}
+.house .ch span{font-size:10.5px;background:rgba(255,255,255,.1);border-radius:8px;padding:2px 6px}
+.house.shake{animation:sh .35s}
+.house.hint{animation:gl 1s 2;box-shadow:0 0 0 3px var(--c)}
+@keyframes sh{25%{transform:translateX(-7px)}75%{transform:translateX(7px)}}
+@keyframes gl{50%{box-shadow:0 0 22px 6px var(--c)}}
+.toast{min-height:44px;margin-top:12px;font-size:13.5px;line-height:1.45;color:var(--mut);text-align:center}
+.toast.ok{color:var(--ok)}.toast.bad{color:var(--bad)}
+.fam{background:var(--card);border:2px solid var(--c);border-radius:22px;padding:18px;text-align:center}
+.fam .e{font-size:40px}.fam .n{font-size:16px;font-weight:700;margin-top:4px}
+.fam .dim{font-size:32px;font-weight:800;color:var(--c);letter-spacing:1px;margin:14px 0;min-height:42px}
+.fam .mem{display:flex;flex-wrap:wrap;gap:6px;justify-content:center}
+.fam .mem span{background:var(--card2);border-radius:10px;padding:4px 9px;font-size:13px}
+.fam .tr{color:var(--mut);font-size:13px;margin-top:12px;line-height:1.5}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.stg{font-size:12px;color:var(--mut);text-align:center;margin-bottom:8px}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+.chips button{background:var(--card2);border:1.5px solid #343970;color:var(--tx);border-radius:12px;padding:8px 11px;font:inherit;font-size:13px}
+.chips button.on{background:#6d5efc;border-color:#6d5efc}
+.rrow{background:var(--card);border-left:5px solid var(--c);border-radius:14px;padding:12px;margin-bottom:9px}
+.rh{display:flex;align-items:center;gap:6px;font-size:15px}.rh b{flex:1}
+.spk{background:var(--card2);border:0;border-radius:10px;padding:5px 9px;font-size:15px;color:var(--tx)}
+.rd{font-size:22px;font-weight:800;color:var(--c);margin:6px 0}
+.rm{font-size:13.5px;line-height:1.5}
+.rrow .tr{margin-top:6px;font-size:12.5px;color:var(--mut)}
+.bl{filter:blur(7px);user-select:none}
+</style></head>
+<body><div id="app"></div>
+<script>
+const F=[
+{d:'ML²T⁻²',e:'👑',n:'Energy ghar',c:'#f5a524',t:'Force × Distance. Work, Heat, Torque sab ek parivaar hain.',m:['Work','Kinetic energy','Potential energy','Heat','Torque','Internal energy']},
+{d:'ML⁻¹T⁻²',e:'🎈',n:'Pressure ghar',c:'#38bdf8',t:'Energy ÷ Volume = Pressure. Stress aur modulus bhi yahin.',m:['Pressure','Stress','Young modulus','Bulk modulus','Energy density']},
+{d:'MLT⁻²',e:'💪',n:'Force ghar',c:'#ef4444',t:'Mass × acceleration. Har tarah ka bal.',m:['Force','Weight','Tension','Friction','Thrust']},
+{d:'MLT⁻¹',e:'🏃',n:'Momentum ghar',c:'#f97316',t:'Mass × velocity. Impulse = F × t, isliye same.',m:['Momentum','Impulse']},
+{d:'ML²T⁻¹',e:'🌀',n:'Angular momentum ghar',c:'#a78bfa',t:'Energy × time. Isliye Planck constant bhi yahin.',m:['Angular momentum','Planck constant']},
+{d:'MT⁻²',e:'🫧',n:'Surface tension ghar',c:'#2dd4bf',t:'Force ÷ Length = Energy ÷ Area. Spring constant bhi.',m:['Surface tension','Spring constant','Surface energy']},
+{d:'L²T⁻²',e:'🔥',n:'Latent heat ghar',c:'#fb7185',t:'Energy ÷ mass = velocity². Gravitational potential bhi.',m:['Latent heat','Gravitational potential']},
+{d:'T⁻¹',e:'🔁',n:'Frequency ghar',c:'#84cc16',t:'1 ÷ Time. Jo bhi "per second" hai.',m:['Frequency','Angular velocity','Decay constant','Activity']},
+{d:'T',e:'⏳',n:'Time ghar',c:'#facc15',t:'RC, L/R, √(l/g) sab time hain.',m:['Time period','Half-life','Mean life']},
+{d:'LT⁻¹',e:'🚀',n:'Velocity ghar',c:'#22d3ee',t:'Length ÷ Time. Light ki speed bhi.',m:['Speed of light','Drift velocity','Escape velocity','Terminal velocity']},
+{d:'L⁻¹',e:'〰️',n:'Wave number ghar',c:'#c084fc',t:'1 ÷ Length. Rydberg aur lens ki power.',m:['Wave number','Rydberg constant','Power of lens']},
+{d:'ML²T⁻²K⁻¹',e:'🌡️',n:'Boltzmann ghar',c:'#f43f5e',t:'Energy ÷ Temperature. Entropy bhi.',m:['Boltzmann constant','Entropy','Heat capacity']},
+{d:'ML²T⁻³A⁻¹',e:'⚡',n:'Potential ghar',c:'#eab308',t:'Energy ÷ Charge. EMF aur voltage bhi.',m:['Potential','EMF','Voltage']},
+{d:'ML²T⁻³A⁻²',e:'🧱',n:'Resistance ghar',c:'#94a3b8',t:'Potential ÷ Current. Reactance, impedance bhi ohm.',m:['Resistance','Reactance','Impedance']},
+{d:'MLT⁻³A⁻¹',e:'🧲',n:'Electric field ghar',c:'#60a5fa',t:'Force ÷ Charge = V ÷ Length.',m:['Electric field','Potential gradient']},
+{d:'MT⁻²A⁻¹',e:'🧭',n:'Magnetic field ghar',c:'#4ade80',t:'F = qvB, isliye B = F ÷ (q·v).',m:['Magnetic field','Magnetic induction']},
+{d:'ML²T⁻²A⁻²',e:'🌪️',n:'Inductance ghar',c:'#f472b6',t:'Flux ÷ Current.',m:['Self inductance','Mutual inductance']},
+{d:'ML²T⁻³',e:'⚙️',n:'Power ghar',c:'#fbbf24',t:'Energy ÷ Time. Power = F × v.',m:['Power','Rate of doing work']},
+{d:'MT⁻³',e:'☀️',n:'Intensity ghar',c:'#fde047',t:'Power ÷ Area. Wave ya light ki intensity.',m:['Intensity','Energy flux','Solar constant','Poynting vector']},
+{d:'LT⁻²',e:'🏎️',n:'Acceleration ghar',c:'#fb923c',t:'Velocity ÷ Time. g aur gravitational field bhi.',m:['Acceleration','g','Gravitational field']},
+{d:'ML⁻¹T⁻¹',e:'🍯',n:'Viscosity ghar',c:'#d97706',t:'F = ηA(dv/dx). Pressure × time bhi.',m:['Coefficient of viscosity','Pressure × time']},
+{d:'L²T⁻¹',e:'💧',n:'Kinematic viscosity ghar',c:'#06b6d4',t:'η ÷ density. Diffusion coefficient bhi.',m:['Kinematic viscosity','Diffusion coefficient']},
+{d:'ML²',e:'🎡',n:'Moment of inertia ghar',c:'#8b5cf6',t:'Mass × radius².',m:['Moment of inertia']},
+{d:'M⁻¹LT²',e:'🗜️',n:'Compressibility ghar',c:'#0ea5e9',t:'1 ÷ Pressure (ya 1 ÷ Bulk modulus).',m:['Compressibility']},
+{d:'M⁻¹L³T⁻²',e:'🌍',n:'G ghar',c:'#16a34a',t:'F = Gm²/r², isse nikalo.',m:['Gravitational constant G']},
+{d:'L²T⁻²K⁻¹',e:'🍳',n:'Specific heat ghar',c:'#ef4444',t:'Q ÷ (m × ΔT).',m:['Specific heat capacity']},
+{d:'MLT⁻³K⁻¹',e:'🔩',n:'Thermal conductivity ghar',c:'#b45309',t:'Q/t = KAΔT/d se nikalo.',m:['Thermal conductivity']},
+{d:'MT⁻³K⁻⁴',e:'✨',n:'Stefan constant ghar',c:'#f59e0b',t:'P = σAT⁴ se nikalo.',m:['Stefan constant σ']},
+{d:'LK',e:'🌈',n:'Wien constant ghar',c:'#ec4899',t:'λ × T = b. Length × Kelvin.',m:['Wien constant b']},
+{d:'ML²T⁻²K⁻¹mol⁻¹',e:'🎈',n:'Gas constant ghar',c:'#14b8a6',t:'Boltzmann constant ka mol wala bhai.',m:['Gas constant R','Molar heat capacity']},
+{d:'K⁻¹',e:'📏',n:'Expansion ghar',c:'#65a30d',t:'1 ÷ Temperature. Sab α, β, γ.',m:['Coefficient of linear expansion','Coefficient of volume expansion','Temp coefficient of resistance']},
+{d:'A',e:'🔌',n:'Current ghar',c:'#facc15',t:'Base quantity, seedha yaad karo.',m:['Current','Displacement current']},
+{d:'AT',e:'🔋',n:'Charge ghar',c:'#22c55e',t:'Current × Time.',m:['Charge']},
+{d:'M⁻¹L⁻²T⁴A²',e:'🪣',n:'Capacitance ghar',c:'#38bdf8',t:'Charge ÷ Potential.',m:['Capacitance']},
+{d:'ML³T⁻³A⁻²',e:'🧵',n:'Resistivity ghar',c:'#a3a3a3',t:'R × Area ÷ length.',m:['Resistivity']},
+{d:'M⁻¹L⁻²T³A²',e:'🚪',n:'Conductance ghar',c:'#2dd4bf',t:'1 ÷ Resistance.',m:['Conductance']},
+{d:'M⁻¹L⁻³T³A²',e:'🛣️',n:'Conductivity ghar',c:'#4ade80',t:'1 ÷ Resistivity.',m:['Conductivity']},
+{d:'ML³T⁻³A⁻¹',e:'🌊',n:'Electric flux ghar',c:'#3b82f6',t:'E × Area.',m:['Electric flux']},
+{d:'LTA',e:'🧿',n:'Dipole moment ghar',c:'#d946ef',t:'Charge × length.',m:['Electric dipole moment']},
+{d:'ML²T⁻²A⁻¹',e:'🕸️',n:'Magnetic flux ghar',c:'#10b981',t:'B × Area.',m:['Magnetic flux']},
+{d:'M⁻¹L⁻³T⁴A²',e:'🌌',n:'ε₀ ghar',c:'#818cf8',t:'Capacitance ÷ Length.',m:['Permittivity ε₀']},
+{d:'MLT⁻²A⁻²',e:'🎯',n:'μ₀ ghar',c:'#f87171',t:'Inductance ÷ Length.',m:['Permeability μ₀']},
+{d:'L²A',e:'🔄',n:'Magnetic moment ghar',c:'#34d399',t:'Current × Area. Bohr magneton bhi.',m:['Magnetic moment','Bohr magneton']},
+{d:'L⁻¹A',e:'🧩',n:'Magnetic intensity ghar',c:'#fb7185',t:'Current ÷ Length.',m:['Magnetic intensity H','Magnetisation']},
+{d:'Dimensionless',e:'⭕',n:'Dimensionless ghar',c:'#e2e8f0',t:'Ratio hai, koi unit nahi. Strain, angle, refractive index.',m:['Strain',"Poisson's ratio",'Refractive index','Coefficient of friction','Relative density','Angle']}
+];
+const LV=[['Mechanics 1',[0,1,2,3,4,17]],['Mechanics 2',[5,6,18,19,20,21,22,23,24]],['Wave + Time',[7,8,9,10]],['Thermal',[11,25,26,27,28,29,30]],['Electricity',[12,13,14,31,32,33,34,35,36]],['Magnetism + EM',[15,16,37,38,39,40,41,42,43]],['Sab mix',[...F.keys()]]];
+const $=s=>document.querySelector(s),app=$('#app');
+let S={};try{S=JSON.parse(localStorage.getItem('dimgame')||'{}')}catch(e){}
+S.xp=S.xp||0;S.weak=S.weak||{};S.rounds=S.rounds||0;
+const save=()=>{try{localStorage.setItem('dimgame',JSON.stringify(S))}catch(e){}};
+const sh=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a};
+const buzz=n=>{try{navigator.vibrate&&navigator.vibrate(n)}catch(e){}};
+const wk=()=>Object.keys(S.weak).filter(k=>S.weak[k]>0);
+
+function home(){
+  app.innerHTML=`<h1>⚛️ Dimension Corner</h1><p class="sub">Khelte-khelte dimensions yaad karo</p>
+  <div class="stat"><div><b>${S.xp}</b>XP</div><div><b>${S.rounds}</b>Rounds</div><div><b>${wk().length}</b>Kamzor cards</div></div>
+  <button class="mode" onclick="pickLv()"><b>🏠 Family Ghar</b><span>Card girta hai, sahi dimension ke ghar me daalo. Galat daloge to sahi ghar chamkega.</span></button>
+  <button class="mode" onclick="ratta()"><b>📖 Ratta Mode</b><span>Sab families chhote sets me. Padho, bolo, chhupao, dohrao. Pakka ratne ke liye.</span></button>
+  <button class="mode" onclick="fadeStart()"><b>🌫️ Fade Mode</b><span>Dimension dikhta hai, phir dheere gaayab. Tum yaad se batao.</span></button>
+  ${wk().length?`<button class="mode" onclick="ghar('weak')"><b>🔁 Kamzor cards</b><span>Jo bhoolte ho, sirf wahi dobara.</span></button>`:''}`;
+}
+function pickLv(){
+  app.innerHTML=`<div class="top"><button class="back" onclick="home()">← Back</button></div><h1>Level chuno</h1><div class="lv">${LV.map((l,i)=>`<button onclick="ghar(${i})">${i+1}. ${l[0]}</button>`).join('')}</div>`;
+}
+
+let G;
+function ghar(lv){
+  let hs,cards=[];
+  if(lv==='weak'){
+    const w=wk().sort((a,b)=>S.weak[b]-S.weak[a]).slice(0,10);
+    hs=[...new Set(w.map(n=>F.findIndex(f=>f.m.includes(n))))];
+    while(hs.length<3)hs.push(sh([...F.keys()]).find(i=>!hs.includes(i)));
+    hs=hs.slice(0,4);cards=w.map(n=>({n,f:F.findIndex(f=>f.m.includes(n))})).filter(c=>hs.includes(c.f));
+  }else{
+    hs=sh(LV[lv][1]).slice(0,4);
+    hs.forEach(i=>{sh(F[i].m).sort((a,b)=>(S.weak[b]||0)-(S.weak[a]||0)).slice(0,3).forEach(n=>cards.push({n,f:i}))});
+  }
+  G={hs,q:sh(cards),tot:cards.length,done:0,put:{},lock:false,lv,miss:0};
+  hs.forEach(i=>G.put[i]=[]);drawG();
+}
+function drawG(){
+  const c=G.q[0];
+  app.innerHTML=`<div class="top"><button class="back" onclick="home()">←</button><div class="bar"><i style="width:${G.done/G.tot*100}%"></i></div><span class="xp">${S.xp} XP</span></div>
+  <div class="cur pop"><small>Ye kis ghar ka hai?</small><div>${c?c.n:'🎉'}</div></div>
+  <div class="houses">${G.hs.map(i=>{const f=F[i];return `<button class="house" id="h${i}" style="--c:${f.c};--t:${f.c}22" onclick="drop(${i})"><div class="e">${f.e}</div><div class="d">${f.d}</div><div class="ch">${G.put[i].map(n=>`<span>${n}</span>`).join('')}</div></button>`}).join('')}</div>
+  <div class="toast" id="ts">Ghar ke upar tap karo</div>`;
+}
+function drop(i){
+  if(G.lock||!G.q.length)return;
+  const c=G.q[0],f=F[c.f],ts=$('#ts');
+  if(c.f===i){
+    G.q.shift();G.done++;G.put[i].push(c.n);S.xp+=10;
+    if(S.weak[c.n])S.weak[c.n]=Math.max(0,S.weak[c.n]-1);
+    save();buzz(15);
+    if(!G.q.length)return endG();
+    drawG();$('#ts').className='toast ok';$('#ts').innerHTML='✅ '+f.t;
+  }else{
+    G.lock=true;G.miss++;S.weak[c.n]=(S.weak[c.n]||0)+1;save();buzz([40,30,40]);
+    G.q.shift();G.q.splice(Math.min(2,G.q.length),0,c);
+    $('#h'+i).classList.add('shake');$('#h'+c.f).classList.add('hint');
+    ts.className='toast bad';ts.innerHTML=`❌ <b>${c.n}</b> → ${f.e} ${f.d}<br>${f.t}`;
+    setTimeout(()=>{G.lock=false;const cur=$('.cur div');if(cur){cur.textContent=G.q[0].n;}$('#h'+c.f)&&$('#h'+c.f).classList.remove('hint')},2200);
+  }
+}
+function endG(){
+  S.rounds++;S.xp+=20;save();
+  app.innerHTML=`<div class="top"><button class="back" onclick="home()">←</button></div><div class="fam" style="--c:#34d399"><div class="e">🎉</div><div class="n">Round complete! +20 XP</div><div class="tr">${G.miss?G.miss+' galat tap hue. Wo cards Kamzor list me gaye, dobara aayenge.':'Ek bhi galti nahi. Ab Fade Mode try karo.'}</div></div>
+  <button class="btn p" onclick="ghar(${G.lv==='weak'?"'weak'":G.lv})">Agla round</button><button class="btn" onclick="fadeStart()">🌫️ Fade Mode me test karo</button><button class="btn" onclick="home()">Home</button>`;
+}
+
+let FD;
+function fadeStart(){
+  const order=sh([...F.keys()]).sort((a,b)=>(fw(b)-fw(a)));
+  FD={q:order.slice(0,6),st:0,rev:false};drawF();
+}
+const fw=i=>F[i].m.reduce((s,n)=>s+(S.weak[n]||0),0);
+function mask(d,st){
+  if(st===0)return d;
+  const t=d.match(/[MLTAK][⁻⁰¹²³⁴⁵⁶⁷⁸⁹]*/g)||[];if(!t.length)return st===1?'▢':'▢▢';
+  return st===1?t.map(x=>x[0]+'▢').join(' '):t.map(()=>'▢▢').join(' ');
+}
+function drawF(){
+  if(!FD.q.length){S.xp+=20;save();return app.innerHTML=`<div class="top"><button class="back" onclick="home()">←</button></div><div class="fam" style="--c:#34d399"><div class="e">🌫️</div><div class="n">Fade round complete! +20 XP</div><div class="tr">Jo 😅 hue wo Kamzor list me hain, unhe Family Ghar me khelo.</div></div><button class="btn p" onclick="fadeStart()">Dobara</button><button class="btn" onclick="home()">Home</button>`}
+  const i=FD.q[0],f=F[i],st=FD.st,shown=st===0||FD.rev;
+  const lab=['1/3 Padho aur dekho','2/3 Aadha gaayab, yaad karo','3/3 Poora gaayab, yaad karo'][st];
+  app.innerHTML=`<div class="top"><button class="back" onclick="home()">←</button><div class="xp">${FD.q.length} ghar bache</div></div><div class="stg">${lab}</div>
+  <div class="fam" style="--c:${f.c}"><div class="e">${f.e}</div><div class="n">${f.n}</div>
+  <div class="dim">${shown?f.d:mask(f.d,st)}</div>
+  <div class="mem">${f.m.map(n=>`<span>${n}</span>`).join('')}</div>
+  ${shown?`<div class="tr">${f.t}</div>`:''}</div>
+  ${st===0?`<button class="btn p" onclick="FD.st=1;drawF()">Samajh gaya, aage</button>`:
+   !FD.rev?`<button class="btn p" onclick="FD.rev=true;drawF()">Dikhao</button>`:
+   `<div class="two"><button class="btn" onclick="fdRate(0)">😅 Bhool gaya</button><button class="btn p" onclick="fdRate(1)">✅ Yaad tha</button></div>`}`;
+}
+function fdRate(ok){
+  const i=FD.q[0],f=F[i];
+  if(ok){S.xp+=15;f.m.forEach(n=>{if(S.weak[n])S.weak[n]--});}else{f.m.forEach(n=>S.weak[n]=(S.weak[n]||0)+1);}
+  save();FD.rev=false;
+  if(!ok){FD.st=0}else if(FD.st<2){FD.st++;}else{FD.q.shift();FD.st=0;}
+  if(!ok){const x=FD.q.shift();FD.q.push(x);}
+  drawF();
+}
+const RS=[[0,1,2,3],[4,5,6,17],[18,19,20,21],[22,23,24,7],[8,9,10,44],[11,25,26,27],[28,29,30],[12,13,14],[31,32,33,34],[35,36,37,38],[15,16,39,40],[41,42,43]],NS=RS.length;
+let R={};
+function ratta(){R={set:0,mode:0,open:{},ord:null};drawR()}
+const rIdx=()=>R.ord||(R.set===NS?[...F.keys()]:RS[R.set]);
+const sp=d=>d.replace(/[MLTAK]/g,' $& ').replace(/⁻/g,' minus ').replace(/[¹²³⁴]/g,c=>({'¹':'1','²':'2','³':'3','⁴':'4'}[c]));
+function say(idx){try{speechSynthesis.cancel();idx.forEach(i=>{const f=F[i],u=new SpeechSynthesisUtterance(f.n+'. '+f.m.join(', ')+'. Dimension: '+sp(f.d));u.lang='hi-IN';u.rate=.85;speechSynthesis.speak(u)})}catch(e){}}
+function rrow(i){
+  const f=F[i],m=R.mode,o=R.open[i],hd=(m===1||m===3)&&!o,hn=(m===2||m===3)&&!o;
+  return `<div class="rrow" style="--c:${f.c}" onclick="R.open[${i}]=!R.open[${i}];drawR()"><div class="rh">${f.e} <b class="${m===3&&!o?'bl':''}">${f.n}</b><button class="spk" onclick="event.stopPropagation();say([${i}])">🔊</button></div><div class="rd ${hd?'bl':''}">${f.d}</div><div class="rm ${hn?'bl':''}">${f.m.join(' • ')}</div>${o||m===0?`<div class="tr">${f.t}</div>`:''}</div>`;
+}
+function drawR(){
+  S.reps=S.reps||{};const M=['📖 Padho','Dimension chhupao','Naam chhupao','Sab chhupao'];
+  app.innerHTML=`<div class="top"><button class="back" onclick="home()">←</button><div class="xp">${S.reps[R.set]||0} baar ho gaya. Target 5.</div></div>
+  <div class="chips">${[...Array(NS+1).keys()].map(i=>`<button class="${i===R.set?'on':''}" onclick="R.set=${i};R.open={};R.ord=null;drawR()">${i<NS?'Set '+(i+1):'Sab'}</button>`).join('')}</div>
+  <div class="chips">${M.map((t,i)=>`<button class="${i===R.mode?'on':''}" onclick="R.mode=${i};R.open={};drawR()">${t}</button>`).join('')}</div>
+  <div class="stg">Chhupe hue part pe tap karke check karo</div>
+  ${rIdx().map(rrow).join('')}
+  <div class="two"><button class="btn" onclick="R.ord=sh(rIdx());R.open={};drawR()">🔀 Shuffle</button><button class="btn" onclick="say(rIdx())">🔊 Poora bolo</button></div>
+  <button class="btn p" onclick="S.reps[R.set]=(S.reps[R.set]||0)+1;S.xp+=5;save();drawR()">✔ Ek baar ho gaya</button>`;
+}
+home();
+</script></body></html>
