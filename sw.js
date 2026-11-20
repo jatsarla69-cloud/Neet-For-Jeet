@@ -1,5 +1,5 @@
-const CACHE_NAME = 'neet-for-jeet-shell-v4';
-const SHELL = ['./', './index.html', './style.css', './data.js', './app.js', './manifest.json'];
+const CACHE_NAME = 'neet-for-jeet-shell-v3';
+const SHELL = ['./', './index.html', './css/style.css', './js/data.js', './js/app.js', './manifest.json'];
 self.addEventListener('install', event => {
   event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(SHELL)).then(() => self.skipWaiting()));
 });
