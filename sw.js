@@ -1,5 +1,5 @@
-const CACHE_NAME = 'neet-for-jeet-root-v4';
-const SHELL = ['./', './index.html', './manifest.json'];
+const CACHE_NAME = 'neet-for-jeet-shell-v4';
+const SHELL = ['./', './index.html', './style.css', './data.js', './app.js', './manifest.json'];
 self.addEventListener('install', event => {
   event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(SHELL)).then(() => self.skipWaiting()));
 });
@@ -10,6 +10,8 @@ self.addEventListener('fetch', event => {
   const request = event.request;
   if (request.method !== 'GET' || new URL(request.url).origin !== self.location.origin) return;
   event.respondWith((async () => {
+    const cached = await caches.match(request);
+    if (cached) return cached;
     try {
       const response = await fetch(request);
       if (response.ok) {
@@ -18,8 +20,6 @@ self.addEventListener('fetch', event => {
       }
       return response;
     } catch (error) {
-      const cached = await caches.match(request);
-      if (cached) return cached;
       if (request.mode === 'navigate') return (await caches.match('./index.html')) || Response.error();
       return Response.error();
     }
