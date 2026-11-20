@@ -92,16 +92,4 @@ render();
 if('serviceWorker'in navigator && location.protocol!=='file:')window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
 
 </script>
-
-<script>
-// Root-upload compatibility: all PNG assets are stored beside index.html.
-document.addEventListener('error', function(ev){
-  const el=ev.target; if(!el || el.tagName!=='IMG' || el.dataset.rootFallback) return;
-  const src=el.getAttribute('src')||''; const file=src.split('/').pop();
-  if(!file || file.startsWith('http')) return;
-  el.dataset.rootFallback='1';
-  if(/\.png$/i.test(file) && !/_Revision\.png$/i.test(file)) el.src=file.replace(/\.png$/i,'_Revision.png');
-  else { el.style.visibility='hidden'; el.removeAttribute('src'); }
-}, true);
-</script>
 </body></html>
